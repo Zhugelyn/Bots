@@ -1,20 +1,21 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(BoxCollider))]
 public class ResourceCreator : UniversalObjectPool<Resource>
 {
     [field: SerializeField] public float SpawnDelay { get; private set; }
-    [SerializeField] private Base @base;
+    [SerializeField] private Base _base;
 
     private void OnEnable()
     {
-        @base.ResourceReceiver.ResourceAccepted += ReturnToPool;
+        _base.ResourceReceiver.ResourceAccepted += ReturnToPool;
     }
 
     private void OnDisable()
     {
-        @base.ResourceReceiver.ResourceAccepted -= ReturnToPool;
+        _base.ResourceReceiver.ResourceAccepted -= ReturnToPool;
     }
 
     private void Start()

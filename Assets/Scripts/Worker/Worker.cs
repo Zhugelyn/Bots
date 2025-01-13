@@ -45,14 +45,8 @@ public class Worker : MonoBehaviour
 
     public int  Speed
     {
-        get 
-        { 
-            return _speed; 
-        }
-        set
-        {
-            _speed = Mathf.Clamp(value, _minSpeed, _maxSpeed);
-        }
+        get => _speed;
+        set => _speed = Mathf.Clamp(value, _minSpeed, _maxSpeed);
     }
     
     private void OnDisable()

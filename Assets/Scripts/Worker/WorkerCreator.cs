@@ -1,10 +1,11 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class WorkerCreator : UniversalObjectPool<Worker>
 {
-    [SerializeField] private Base @base;
+    [SerializeField] private Base _base;
     [SerializeField] private Transform _spawnPosition;
     [SerializeField] private Button _button;
 
@@ -34,7 +35,7 @@ public class WorkerCreator : UniversalObjectPool<Worker>
     private void CreateWorker()
     {
         var worker = Pool.Get();
-        worker.Initialize(@base, _spawnPosition.position);
+        worker.Initialize(_base, _spawnPosition.position);
         WorkerCreated?.Invoke(worker);
     }
 }
