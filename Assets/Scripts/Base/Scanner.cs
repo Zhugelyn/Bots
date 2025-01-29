@@ -6,23 +6,26 @@ using UnityEngine;
 public class Scanner : MonoBehaviour
 {
     private const string NameLayerMask = "Resource";
+    
+    public event Action<List<Vector3>> ResourcesFound;
 
     private float _radius;
     private LayerMask _layerMask;
     private int _scanDelay;
 
-    public event Action<List<Vector3>> ResourcesFound;
+    private HashSet<Vector3> _scannedResources;
 
     public void Initialize()
     {
         _radius = 150;
         _scanDelay = 10;
         _layerMask = LayerMask.GetMask(NameLayerMask);
-
+        _scannedResources = new HashSet<Vector3>();
+        
         StartCoroutine(StartScan());
     }
 
-    private void Start()
+    private void Awake()
     {
         Initialize();
     }
@@ -33,7 +36,7 @@ public class Scanner : MonoBehaviour
 
         while (enabled)
         {
-            var resources = Scan();
+            List<Vector3> resources = Scan();
 
             if (resources.Count > 0)
                 ResourcesFound?.Invoke(resources);
@@ -42,20 +45,23 @@ public class Scanner : MonoBehaviour
         }
     }
 
-    private List<Vector3> Scan()
+    private  List<Vector3> Scan()
     {
         List<Vector3> resourcesPosition = new List<Vector3>();
-        var resources = Physics.OverlapSphere(transform.position, _radius, _layerMask);
+        Collider[] colliders = Physics.OverlapSphere(transform.position, _radius, _layerMask);
 
-        foreach (var resourc in resources)
+        foreach (Collider collider in colliders)
         {
-            Resource resource = resourc.GetComponent<Resource>();
+            if (collider.TryGetComponent(out Resource _) == false)
+                continue;
+            
+            Vector3 position = collider.transform.position; 
+            
+            if (_scannedResources.Contains(position))
+                continue;
 
-            if (resource.IsScaned == false)
-            {
-                resourcesPosition.Add(resource.transform.position);
-                resource.IsScaned = true;
-            }
+            resourcesPosition.Add(position);
+            _scannedResources.Add(position);
         }
 
         return resourcesPosition;

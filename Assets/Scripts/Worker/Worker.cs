@@ -3,6 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(WorkerAnimation))]
 public class Worker : MonoBehaviour
 {
+    [field: SerializeField] public Transform ResourcePosition { get; private set; }
+
     public bool IsBusy;
     public Resource Resource;
 
@@ -15,7 +17,7 @@ public class Worker : MonoBehaviour
     private CollectionState _collectionState;
     private WorkerStateContext _workerStateContext;
     private ResourceDiscovery _resourceDiscovery;
-
+    
     public void Initialize(Base @base, Vector3 position)
     {
         _maxSpeed = 10;

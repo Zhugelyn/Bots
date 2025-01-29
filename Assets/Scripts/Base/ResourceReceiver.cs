@@ -10,7 +10,8 @@ public class ResourceReceiver : MonoBehaviour
         if (other.gameObject.TryGetComponent(out Worker worker))
             if (worker.Resource != null)
             {
-                var resource = worker.Resource;
+                Resource resource = worker.Resource;
+                resource.Unsubscribe();
                 worker.SetIdleState();
                 ResourceAccepted?.Invoke(resource);
             }

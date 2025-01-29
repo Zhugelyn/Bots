@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 public class ResourcesCounter : MonoBehaviour
 {
-    [SerializeField] private Base _base; 
+    [SerializeField] private ResourceReceiver _resourceReceiver;
     
     public event Action<Dictionary<ResourceType, int>> Changed;
     
@@ -19,12 +19,12 @@ public class ResourcesCounter : MonoBehaviour
 
     private void OnEnable()
     {
-        _base.ResourceReceiver.ResourceAccepted += ChangeResourceCount;
+        _resourceReceiver.ResourceAccepted += ChangeResourceCount;
     }
 
     private void OnDisable()
     {
-        _base.ResourceReceiver.ResourceAccepted -= ChangeResourceCount;
+        _resourceReceiver.ResourceAccepted -= ChangeResourceCount;
     }
     
     private void ChangeResourceCount(Resource resource)

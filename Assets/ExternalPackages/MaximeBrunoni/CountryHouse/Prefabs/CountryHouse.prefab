@@ -11,6 +11,10 @@ GameObject:
   - component: {fileID: 7141927108607896883}
   - component: {fileID: 3404102503239518212}
   - component: {fileID: 6077543182977593961}
+  - component: {fileID: 8823813394555096651}
+  - component: {fileID: 3923421187029283298}
+  - component: {fileID: 1472303187903256354}
+  - component: {fileID: 7896535354845716163}
   - component: {fileID: 2628859944092842189}
   m_Layer: 0
   m_Name: CountryHouse
@@ -69,6 +73,58 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _workerCreator: {fileID: 0}
+--- !u!114 &8823813394555096651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4870010141513049078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcba43b729f03b54e9017ecc4d42d22b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _commander: {fileID: 0}
+--- !u!114 &3923421187029283298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4870010141513049078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd33f09b3ffa77244b5d5274f9520d40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1472303187903256354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4870010141513049078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 977f04489886408488e6a25ea1760e60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _base: {fileID: 0}
+  _scanner: {fileID: 0}
+--- !u!114 &7896535354845716163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4870010141513049078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f2efd055d649704eb4f897fe499104f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _receiver: {fileID: 0}
 --- !u!54 &2628859944092842189
 Rigidbody:
   m_ObjectHideFlags: 0

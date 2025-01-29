@@ -1,31 +1,48 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System;
 
 public class BaseCommander : MonoBehaviour
 {
-    private Base _base;
+    [SerializeField] private Base _base;
+    [SerializeField] private Scanner _scanner;
 
-    public void Initialize(Base base1)
+    [SerializeField] private List<Vector3> _resourcePosition;
+
+    public void Initialize()
     {
-        _base = base1;
+        _resourcePosition = new List<Vector3>();
+
+        _scanner.ResourcesFound += AddPositions;
+    }
+
+    private void Awake()
+    {
+        Initialize();
+    }
+
+    private void OnDisable()
+    {
+        _scanner.ResourcesFound -= AddPositions;
     }
 
     private void Update()
     {
-        if (CheckTheSendingOfWorker())
-            SendWorkerToGetResource(_base._backlog.First());
+        if (_resourcePosition.Any())
+            SendWorkerToGetResource(_resourcePosition.First());
     }
 
     private void SendWorkerToGetResource(Vector3 position)
     {
-        var worker = GetFreeWorker();
+        var worker = _base.GetFreeWorker();
+
+        if (worker == null)
+            return;
+        
         worker.SetMovementState(position);
-        _base._backlog.Remove(position);
+        _resourcePosition.Remove(position);
     }
 
-    private Worker GetFreeWorker() =>
-        _base.Workers.Where(w => w.IsBusy == false).First();
-
-    private bool CheckTheSendingOfWorker() =>
-        _base._backlog.Any() && _base.Workers.Any(w => w.IsBusy == false);
+    private void AddPositions(List<Vector3> resources) => _resourcePosition.AddRange(resources);
 }

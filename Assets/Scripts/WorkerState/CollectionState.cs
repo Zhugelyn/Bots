@@ -4,7 +4,6 @@ public class CollectionState : MonoBehaviour, IWorkerState
 {
     private Worker _worker;
     private Resource _resource;
-
     
     public void Initialize(Worker worker, ICollectable resource)
     {
@@ -20,7 +19,6 @@ public class CollectionState : MonoBehaviour, IWorkerState
 
     private void SetMovementState()
     {
-        _resource.gameObject.SetActive(false);
         _worker.Resource = _resource;
         _worker.SetMovementState(_worker.Base.transform.position);
     }

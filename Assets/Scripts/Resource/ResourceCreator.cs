@@ -1,21 +1,23 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
+using System;
+using System.Threading.Tasks;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(BoxCollider))]
 public class ResourceCreator : UniversalObjectPool<Resource>
 {
     [field: SerializeField] public float SpawnDelay { get; private set; }
-    [SerializeField] private Base _base;
+    [SerializeField] private ResourceReceiver _resourceReceiver;
 
     private void OnEnable()
     {
-        _base.ResourceReceiver.ResourceAccepted += ReturnToPool;
+        _resourceReceiver.ResourceAccepted += ReturnToPool;
     }
 
     private void OnDisable()
     {
-        _base.ResourceReceiver.ResourceAccepted -= ReturnToPool;
+        _resourceReceiver.ResourceAccepted -= ReturnToPool;
     }
 
     private void Start()
@@ -29,8 +31,8 @@ public class ResourceCreator : UniversalObjectPool<Resource>
 
         while (enabled)
         {
-            var resource = Pool.Get();
-            var spawnPoint = GetRandomSpawnPoint();
+            Resource resource = Pool.Get();
+            Vector3 spawnPoint = GetRandomSpawnPoint();
             resource.Initialize(spawnPoint);
 
             yield return wait;
@@ -44,13 +46,13 @@ public class ResourceCreator : UniversalObjectPool<Resource>
 
     private Vector3 GetRandomSpawnPoint()
     {
-        var boxCollider = GetComponent<BoxCollider>();
+        BoxCollider boxCollider = GetComponent<BoxCollider>();
         Vector3 center = boxCollider.center;
         Vector3 size = boxCollider.size;
 
         float randomX = Random.Range(-size.x / 2f, size.x / 2f);
         float randomZ = Random.Range(-size.z / 2f, size.z / 2f);
-        float fixedY = 5f;
+        float fixedY = 3f;
 
         return new Vector3(randomX, fixedY, randomZ) + transform.position + center;
     }

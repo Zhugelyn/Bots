@@ -34,7 +34,7 @@ public class WorkerCreator : UniversalObjectPool<Worker>
 
     private void CreateWorker()
     {
-        var worker = Pool.Get();
+        Worker worker = Pool.Get();
         worker.Initialize(_base, _spawnPosition.position);
         WorkerCreated?.Invoke(worker);
     }
