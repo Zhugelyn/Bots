@@ -32,7 +32,9 @@ public class Base : MonoBehaviour
         _workerCreator.WorkerCreated -= AddWorker;
     }
 
-    private void AddWorker(Worker worker) => _workers.Add(worker);
+    private void AddWorker(Worker worker) => 
+        _workers.Add(worker);
 
-    public Worker GetFreeWorker() => _workers.FirstOrDefault(w => !w.IsBusy);
+    public Worker GetFreeWorker() => 
+        _workers.FirstOrDefault(worker => !worker.IsBusy);
 }

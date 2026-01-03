@@ -12,7 +12,7 @@ public class ResourceReceiver : MonoBehaviour
             {
                 Resource resource = worker.Resource;
                 resource.Unsubscribe();
-                worker.SetIdleState();
+                worker.StateMachine.SetIdleState();
                 ResourceAccepted?.Invoke(resource);
             }
     }

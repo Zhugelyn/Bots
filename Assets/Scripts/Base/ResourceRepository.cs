@@ -24,5 +24,6 @@ public class ResourceRepository : MonoBehaviour
         Initialize();
     }
 
-    private void Add(Resource resource) => _resources.Add(resource);
+    private void Add(Resource resource) => 
+        _resources.Add(resource);
 }

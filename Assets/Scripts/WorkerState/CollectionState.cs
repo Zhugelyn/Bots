@@ -20,6 +20,6 @@ public class CollectionState : MonoBehaviour, IWorkerState
     private void SetMovementState()
     {
         _worker.Resource = _resource;
-        _worker.SetMovementState(_worker.Base.transform.position);
+        _worker.StateMachine.SetMovementState(_worker.Base.transform.position);
     }
 }

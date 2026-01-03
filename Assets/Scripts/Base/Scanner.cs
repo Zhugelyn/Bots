@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Scanner : MonoBehaviour
 {
-    private const string NameLayerMask = "Resource";
+    private const string  ResourceLayerMask = "Resource";
     
     public event Action<List<Vector3>> ResourcesFound;
 
@@ -19,7 +19,7 @@ public class Scanner : MonoBehaviour
     {
         _radius = 150;
         _scanDelay = 10;
-        _layerMask = LayerMask.GetMask(NameLayerMask);
+        _layerMask = LayerMask.GetMask(ResourceLayerMask);
         _scannedResources = new HashSet<Vector3>();
         
         StartCoroutine(StartScan());

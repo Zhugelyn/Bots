@@ -7,16 +7,24 @@ public class Worker : MonoBehaviour
 
     public bool IsBusy;
     public Resource Resource;
+    public Vector3 DestinationPoint;
 
     private int _speed;
     private int _maxSpeed;
     private int _minSpeed;
-
-    private IdleState _idleState;
-    private MovementState _movementState;
-    private CollectionState _collectionState;
-    private WorkerStateContext _workerStateContext;
+    
     private ResourceDiscovery _resourceDiscovery;
+
+    public WorkerStateMachine StateMachine { get; private set; }
+    public WorkerAnimation Animation { get; private set; }
+
+    public Base Base { get; private set; }
+
+    public int  Speed
+    {
+        get => _speed;
+        set => _speed = Mathf.Clamp(value, _minSpeed, _maxSpeed);
+    }
     
     public void Initialize(Base @base, Vector3 position)
     {
@@ -31,41 +39,17 @@ public class Worker : MonoBehaviour
         _resourceDiscovery = gameObject.AddComponent<ResourceDiscovery>();
         _resourceDiscovery.Initialize(this);
 
-        _idleState = gameObject.AddComponent<IdleState>();
-        _movementState = gameObject.AddComponent<MovementState>();
-        _collectionState = gameObject.AddComponent<CollectionState>();
-        _workerStateContext = new WorkerStateContext(this);
+        StateMachine = gameObject.AddComponent<WorkerStateMachine>();
+        StateMachine.Initialize(this);
 
-        _resourceDiscovery.Discovered += SetCollectionState;
-    }
-
-    public Vector3 DestinationPoint { get; private set; }
-
-    public WorkerAnimation Animation { get; private set; }
-
-    public Base Base { get; private set; }
-
-    public int  Speed
-    {
-        get => _speed;
-        set => _speed = Mathf.Clamp(value, _minSpeed, _maxSpeed);
+        _resourceDiscovery.Discovered += OnResourceDiscovered;
     }
     
     private void OnDisable()
     {
-        _resourceDiscovery.Discovered -= SetCollectionState;
+        _resourceDiscovery.Discovered -= OnResourceDiscovered;
     }
-
-    public void SetIdleState() =>
-        _workerStateContext.Transition(_idleState);
-
-    public void SetCollectionState(Resource resource) =>
-        _workerStateContext.Transition(_collectionState, resource);
-
-    public void SetMovementState(Vector3 destinationPoint)
-    {
-        var offsetY = new Vector3(0, destinationPoint.y, 0);
-        DestinationPoint = destinationPoint - offsetY;
-        _workerStateContext.Transition(_movementState);
-    }
+    
+    private void OnResourceDiscovered(Resource resource) =>
+        StateMachine.SetCollectionState(resource);
 }

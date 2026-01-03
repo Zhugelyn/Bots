@@ -40,9 +40,10 @@ public class BaseCommander : MonoBehaviour
         if (worker == null)
             return;
         
-        worker.SetMovementState(position);
+        worker.StateMachine.SetMovementState(position);
         _resourcePosition.Remove(position);
     }
 
-    private void AddPositions(List<Vector3> resources) => _resourcePosition.AddRange(resources);
+    private void AddPositions(List<Vector3> resources) => 
+        _resourcePosition.AddRange(resources);
 }
