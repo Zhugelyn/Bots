@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Scanner : MonoBehaviour
 {
-    private const string  ResourceLayerMask = "Resource";
+    private const string ResourceLayerMask = "Resource";
     
     public event Action<List<Vector3>> ResourcesFound;
 
