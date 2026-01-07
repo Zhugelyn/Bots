@@ -41,7 +41,7 @@ public class Resource : MonoBehaviour, ICollectable
         transform.localPosition = new Vector3(0, 0, 0);
     }
 
-    new public ResourceType GetType()
+    public ResourceType GetResourceType()
     {
         return _type;
     }

@@ -1,13 +1,12 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(WorkerAnimation))]
+[RequireComponent(typeof(WorkerStateMachine))]
+[RequireComponent(typeof(ResourceDiscovery))]
 public class Worker : MonoBehaviour
 {
     [field: SerializeField] public Transform ResourcePosition { get; private set; }
-
-    public bool IsBusy;
-    public Resource Resource;
-    public Vector3 DestinationPoint;
 
     private int _speed;
     private int _maxSpeed;
@@ -15,9 +14,11 @@ public class Worker : MonoBehaviour
     
     private ResourceDiscovery _resourceDiscovery;
 
+    public bool IsBusy { get; set; }
+    public Resource Resource { get; set; }
+    public Vector3 DestinationPoint { get; set; }
     public WorkerStateMachine StateMachine { get; private set; }
     public WorkerAnimation Animation { get; private set; }
-
     public Base Base { get; private set; }
 
     public int  Speed
@@ -25,7 +26,14 @@ public class Worker : MonoBehaviour
         get => _speed;
         set => _speed = Mathf.Clamp(value, _minSpeed, _maxSpeed);
     }
-    
+
+    private void Awake()
+    {
+        Animation = GetComponent<WorkerAnimation>();
+        StateMachine = GetComponent<WorkerStateMachine>();
+        _resourceDiscovery = GetComponent<ResourceDiscovery>();
+    }
+
     public void Initialize(Base @base, Vector3 position)
     {
         _maxSpeed = 10;
@@ -34,14 +42,9 @@ public class Worker : MonoBehaviour
         transform.position = position;
         Base = @base;
         IsBusy = false;
-        Animation = GetComponent<WorkerAnimation>();
-
-        _resourceDiscovery = gameObject.AddComponent<ResourceDiscovery>();
-        _resourceDiscovery.Initialize(this);
-
-        StateMachine = gameObject.AddComponent<WorkerStateMachine>();
+        
         StateMachine.Initialize(this);
-
+        _resourceDiscovery.Initialize(this);
         _resourceDiscovery.Discovered += OnResourceDiscovered;
     }
     

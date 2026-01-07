@@ -30,13 +30,13 @@ public class ResourcesCounter : MonoBehaviour
     private void ChangeResourceCount(Resource resource)
     {
         int startResourceCount = 1;
-        ResourceType type = resource.GetType();
+        ResourceType type = resource.GetResourceType();
         var needType = _resourcesCount.Where(r => r.Key == type);
 
         if (needType.Any())
             _resourcesCount[type]++;
         else
-            _resourcesCount.Add(resource.GetType(), startResourceCount);
+            _resourcesCount.Add(resource.GetResourceType(), startResourceCount);
         
         Changed?.Invoke(_resourcesCount);
     }
