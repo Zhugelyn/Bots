@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Infrastructure
 {
-    public abstract class State : MonoBehaviour
+    public abstract class State
     {
         private readonly IStateChanger _stateChanger;
         private readonly List<Transition> _transitions = new();

@@ -11,20 +11,12 @@ namespace Workers.StateMachines.States
             _worker = worker;
         }
 
-        public void Initialize(Worker worker, ICollectable _)
+        public override void Enter()
         {
-            if (_worker == null)
-                _worker = worker;
-
-            worker.CompleteTask();
-            worker.DropResource();
-            worker.Speed = 0;
-        }
-
-        private void Update()
-        {
-            if (_worker != null && _worker.IsBusy == false)
-                _worker.Animation.Idle();
+            _worker.Animation.Idle();
+            _worker.CompleteTask();
+            _worker.DropResource();
+            _worker.Speed = 0;
         }
     }
 }

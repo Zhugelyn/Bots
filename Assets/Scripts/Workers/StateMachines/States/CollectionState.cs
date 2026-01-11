@@ -6,12 +6,10 @@ namespace Workers.StateMachines.States
     public class CollectionState : State
     {
         private Worker _worker;
-        private Resource _resource;
 
-        public CollectionState(IStateChanger stateChanger, Worker worker, Resource resource) : base(stateChanger)
+        public CollectionState(IStateChanger stateChanger, Worker worker) : base(stateChanger)
         {
             _worker = worker;
-            _resource = resource;
         }
 
         public override void Enter()
@@ -22,7 +20,6 @@ namespace Workers.StateMachines.States
 
         public override void Exit()
         {
-            _worker.PickUpResource(_resource);
             _worker.Resource.UpdateState(_worker.ResourcePosition);
         }
     }

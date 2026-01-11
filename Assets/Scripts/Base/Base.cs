@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Workers;
+using Workers.Factory;
 
 [RequireComponent(typeof(BaseCommander)),
 RequireComponent(typeof(ResourceReceiver)),
@@ -12,6 +13,8 @@ public class Base : MonoBehaviour
     [SerializeField] private WorkerCreator _workerCreator;
     
     private List<Worker> _workers;
+    
+    public ResourceReceiver ResourceReceiver { get; private set; }
 
     public void Initialize()
     {
@@ -20,6 +23,7 @@ public class Base : MonoBehaviour
 
     private void Awake()
     {
+        ResourceReceiver = GetComponent<ResourceReceiver>();
         Initialize();
     }
 

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-namespace Workers
+namespace Workers.Factory
 {
     public class WorkerCreator : UniversalObjectPool<Worker>
     {
@@ -17,7 +17,7 @@ namespace Workers
         {
             while (_startWorkersCount != 0)
             {
-                CreateWorker();
+                Create();
                 _startWorkersCount--;
             }
         }
@@ -26,15 +26,15 @@ namespace Workers
 
         private void OnEnable()
         {
-            _button.onClick.AddListener(CreateWorker);
+            _button.onClick.AddListener(Create);
         }
 
         private void OnDisable()
         {
-            _button.onClick.RemoveListener(CreateWorker);
+            _button.onClick.RemoveListener(Create);
         }
 
-        private void CreateWorker()
+        private void Create()
         {
             Worker worker = Pool.Get();
             worker.Initialize(_base, _spawnPosition.position);

@@ -13,8 +13,7 @@ namespace Workers
         private int _maxSpeed;
         private int _minSpeed;
 
-        private ResourceDiscovery _resourceDiscovery;
-
+        public ResourceDiscovery ResourceDiscovery { get; private set; }
         public bool IsBusy { get; private set; }
         public Resource Resource { get; private set; }
         public Vector3 DestinationPoint { get; private set; }
@@ -30,7 +29,7 @@ namespace Workers
         private void Awake()
         {
             Animation = GetComponent<WorkerAnimation>();
-            _resourceDiscovery = GetComponent<ResourceDiscovery>();
+            ResourceDiscovery = GetComponent<ResourceDiscovery>();
         }
 
         public void Initialize(Base @base, Vector3 position)
@@ -42,7 +41,7 @@ namespace Workers
             Base = @base;
             IsBusy = false;
             
-            _resourceDiscovery.Initialize(this);
+            ResourceDiscovery.Initialize(this);
         }
 
         public void AssignTask() =>

@@ -41,6 +41,7 @@ public class BaseCommander : MonoBehaviour
         if (worker == null)
             return;
         
+        worker.SetDestinationPoint(position);
         _resourcePosition.Remove(position);
     }
 
