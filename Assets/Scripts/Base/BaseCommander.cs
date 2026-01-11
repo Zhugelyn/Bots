@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System;
+using Workers;
 
 public class BaseCommander : MonoBehaviour
 {
@@ -40,7 +41,6 @@ public class BaseCommander : MonoBehaviour
         if (worker == null)
             return;
         
-        worker.StateMachine.SetMovementState(position);
         _resourcePosition.Remove(position);
     }
 

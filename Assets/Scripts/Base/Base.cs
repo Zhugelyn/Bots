@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Workers;
 
 [RequireComponent(typeof(BaseCommander)),
 RequireComponent(typeof(ResourceReceiver)),

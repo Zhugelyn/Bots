@@ -7,8 +7,6 @@ public class Resource : MonoBehaviour, ICollectable
     [SerializeField] private ResourceType _type;
     [SerializeField] private Rigidbody _rigidbody;
 
-    private Worker _worker;
-
     public void Initialize(Vector3 position)
     {
         transform.position = position;
@@ -16,28 +14,11 @@ public class Resource : MonoBehaviour, ICollectable
         _rigidbody.useGravity = true;
         transform.SetParent(null);
     }
-
-    public void Subscribe(Worker worker)
-    {
-        if (_worker != null)
-            return;
-
-        _worker = worker;
-        _worker.Animation.PickUpFinished += UpdateState;
-    }
-        
-    public void Unsubscribe()
-    {
-        if (_worker == null)
-            return;
-        
-        _worker.Animation.PickUpFinished -= UpdateState;
-    }
     
-    private void UpdateState()
+    public void UpdateState(Transform target)
     {
         _rigidbody.useGravity = false;
-        transform.SetParent(_worker.ResourcePosition);
+        transform.SetParent(target);
         transform.localPosition = new Vector3(0, 0, 0);
     }
 

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Workers;
 
 public class ResourceReceiver : MonoBehaviour
 {
@@ -11,8 +12,6 @@ public class ResourceReceiver : MonoBehaviour
             if (worker.Resource != null)
             {
                 Resource resource = worker.Resource;
-                resource.Unsubscribe();
-                worker.StateMachine.SetIdleState();
                 ResourceAccepted?.Invoke(resource);
             }
     }
