@@ -16,10 +16,10 @@ namespace Workers.StateMachines.Transitions
         {
             var offsetY = new Vector3(0, 0, 0);
             
-            if (_worker.Resource is not null)
+            if (_worker.HasResource)
                 offsetY = new Vector3(0, _worker.Resource.transform.position.y, 0);
             
-            return _worker.Resource is not null && 
+            return _worker.HasResource && 
                    _worker.DestinationPoint == _worker.Resource.transform.position - offsetY;
         }
     }

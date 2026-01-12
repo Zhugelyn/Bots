@@ -10,19 +10,20 @@ namespace Workers
     [RequireComponent(typeof(WorkerStateMachineFactory))]
     public class Worker : MonoBehaviour
     {
-        [field: SerializeField] public Transform ResourcePosition { get; private set; }
+        [field: SerializeField] public Transform ResourceCarryPoint { get; private set; }
 
         private int _speed;
         private int _maxSpeed;
         private int _minSpeed;
         private StateMachine _stateMachine;
         
-        public ResourceDiscovery ResourceDiscovery { get; private set; }
-        [field: SerializeField] public bool IsBusy { get; private set; }
-
+        public bool HasResource => Resource != null;
+        
+        public bool IsBusy { get; private set; }
         public bool IsMove { get; private set; }
+        public Vector3 DestinationPoint { get; private set; }
         public Resource Resource { get; private set; }
-        [field: SerializeField] public Vector3 DestinationPoint { get; private set; }
+        public ResourceDiscovery ResourceDiscovery { get; private set; } 
         public WorkerAnimation Animation { get; private set; }
         public Base Base { get; private set; }
 
@@ -36,7 +37,6 @@ namespace Workers
         {
             Animation = GetComponent<WorkerAnimation>();
             ResourceDiscovery = GetComponent<ResourceDiscovery>();
-            
         }
 
         private void Update()

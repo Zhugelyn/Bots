@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using System;
-using Workers;
 
 public class BaseCommander : MonoBehaviour
 {
@@ -10,13 +8,6 @@ public class BaseCommander : MonoBehaviour
     [SerializeField] private Scanner _scanner;
 
     [SerializeField] private List<Vector3> _resourcePosition;
-
-    public void Initialize()
-    {
-        _resourcePosition = new List<Vector3>();
-
-        _scanner.ResourcesFound += AddPositions;
-    }
 
     private void Awake()
     {
@@ -32,6 +23,13 @@ public class BaseCommander : MonoBehaviour
     {
         if (_resourcePosition.Any())
             SendWorkerToGetResource(_resourcePosition.First());
+    }
+    
+    public void Initialize()
+    {
+        _resourcePosition = new List<Vector3>();
+
+        _scanner.ResourcesFound += AddPositions;
     }
 
     private void SendWorkerToGetResource(Vector3 position)

@@ -8,7 +8,7 @@ namespace Workers
     {
         [SerializeField] private Animator _animator;
 
-        public event Action PickUpFinished;
+        public event Action OnPickUpCompleted;
 
         private AnimationStateMonitor _monitor;
 
@@ -20,7 +20,7 @@ namespace Workers
 
         private void OnPickUpComplete()
         {
-            PickUpFinished?.Invoke();
+            OnPickUpCompleted?.Invoke();
         }
 
         private void Setup(float speed, bool isPickUp)

@@ -1,7 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using System;
-using System.Threading.Tasks;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(BoxCollider))]
@@ -9,7 +7,9 @@ public class ResourceCreator : UniversalObjectPool<Resource>
 {
     [field: SerializeField] public float SpawnDelay { get; private set; }
     [SerializeField] private ResourceReceiver _resourceReceiver;
-
+    
+    private BoxCollider _boxCollider;
+    
     private void OnEnable()
     {
         _resourceReceiver.ResourceAccepted += ReturnToPool;
@@ -22,6 +22,8 @@ public class ResourceCreator : UniversalObjectPool<Resource>
 
     private void Start()
     {
+        _boxCollider = GetComponent<BoxCollider>();
+        
         StartCoroutine(Create());
     }
 
@@ -31,6 +33,7 @@ public class ResourceCreator : UniversalObjectPool<Resource>
 
         while (enabled)
         {
+            
             Resource resource = Pool.Get();
             Vector3 spawnPoint = GetRandomSpawnPoint();
             resource.Initialize(spawnPoint);
@@ -46,9 +49,8 @@ public class ResourceCreator : UniversalObjectPool<Resource>
 
     private Vector3 GetRandomSpawnPoint()
     {
-        BoxCollider boxCollider = GetComponent<BoxCollider>();
-        Vector3 center = boxCollider.center;
-        Vector3 size = boxCollider.size;
+        Vector3 center = _boxCollider.center;
+        Vector3 size = _boxCollider.size;
 
         float randomX = Random.Range(-size.x / 2f, size.x / 2f);
         float randomZ = Random.Range(-size.z / 2f, size.z / 2f);

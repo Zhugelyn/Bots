@@ -16,11 +16,6 @@ public class Base : MonoBehaviour
     
     public ResourceReceiver ResourceReceiver { get; private set; }
 
-    public void Initialize()
-    {
-        _workers = new List<Worker>();
-    }
-
     private void Awake()
     {
         ResourceReceiver = GetComponent<ResourceReceiver>();
@@ -35,6 +30,11 @@ public class Base : MonoBehaviour
     private void OnDisable()
     {
         _workerCreator.WorkerCreated -= AddWorker;
+    }
+    
+    public void Initialize()
+    {
+        _workers = new List<Worker>();
     }
 
     private void AddWorker(Worker worker) => 

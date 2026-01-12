@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using TMPro;
 
@@ -22,13 +22,11 @@ public class ResourceCounterView : MonoBehaviour
     {
         foreach (var resourceCountText in _resourceCountTexts)
         {
-            var needResource = resourcesCount.Where(r => r.Key.ToString() == resourceCountText.name);
-
-            if (!needResource.Any())
-                continue;
-
-            var count = needResource.Select(r => r.Value).First();
-            resourceCountText.text = SetDisplay(count);
+            if (Enum.TryParse(resourceCountText.name, true, out ResourceType resourceType))
+            {
+                if (resourcesCount.TryGetValue(resourceType, out int value))
+                    resourceCountText.text = SetDisplay(value);
+            }
         }
     }
 

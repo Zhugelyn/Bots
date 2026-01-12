@@ -6,14 +6,7 @@ public class ResourceRepository : MonoBehaviour
     [SerializeField] private ResourceReceiver _receiver;
 
     private List<Resource> _resources;
-
-    public void Initialize()
-    {
-        _resources = new List<Resource>();
-
-        _receiver.ResourceAccepted += Add;
-    }
-
+    
     private void OnDisable()
     {
         _receiver.ResourceAccepted -= Add;
@@ -22,6 +15,13 @@ public class ResourceRepository : MonoBehaviour
     private void Awake()
     {
         Initialize();
+    }
+    
+    public void Initialize()
+    {
+        _resources = new List<Resource>();
+
+        _receiver.ResourceAccepted += Add;
     }
 
     private void Add(Resource resource) => 

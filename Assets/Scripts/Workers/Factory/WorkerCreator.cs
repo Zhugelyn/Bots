@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Workers.Factory
@@ -10,19 +9,10 @@ namespace Workers.Factory
         [SerializeField] private Base _base;
         [SerializeField] private Transform _spawnPosition;
         [SerializeField] private Button _button;
+        
+        public event Action<Worker> WorkerCreated;
 
         private int _startWorkersCount = 3;
-
-        private void Start()
-        {
-            while (_startWorkersCount != 0)
-            {
-                Create();
-                _startWorkersCount--;
-            }
-        }
-
-        public event Action<Worker> WorkerCreated;
 
         private void OnEnable()
         {
@@ -33,7 +23,16 @@ namespace Workers.Factory
         {
             _button.onClick.RemoveListener(Create);
         }
-
+        
+        private void Start()
+        {
+            while (_startWorkersCount != 0)
+            {
+                Create();
+                _startWorkersCount--;
+            }
+        }
+        
         private void Create()
         {
             Worker worker = Pool.Get();

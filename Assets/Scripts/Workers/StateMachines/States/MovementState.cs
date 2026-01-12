@@ -26,7 +26,7 @@ namespace Workers.StateMachines.States
             _worker.ResourceDiscovery.Discovered += PickUpResource;
             _worker.Animation.Move();
             _worker.AssignTask();
-            _worker.Speed = _worker.Resource != null ? _speedWithResource : _speedWithoutResource;
+            _worker.Speed = _worker.HasResource ? _speedWithResource : _speedWithoutResource;
         }
 
         public override void Exit()

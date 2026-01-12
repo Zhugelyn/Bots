@@ -1,4 +1,3 @@
-using UnityEngine;
 using Infrastructure;
 
 namespace Workers.StateMachines.States

@@ -10,11 +10,16 @@ public class Scanner : MonoBehaviour
     public event Action<List<Vector3>> ResourcesFound;
 
     private float _radius;
-    private LayerMask _layerMask;
     private int _scanDelay;
+    private LayerMask _layerMask;
 
     private HashSet<Vector3> _scannedResources;
-
+    
+    private void Awake()
+    {
+        Initialize();
+    }
+    
     public void Initialize()
     {
         _radius = 150;
@@ -23,11 +28,6 @@ public class Scanner : MonoBehaviour
         _scannedResources = new HashSet<Vector3>();
         
         StartCoroutine(StartScan());
-    }
-
-    private void Awake()
-    {
-        Initialize();
     }
 
     private IEnumerator StartScan()
@@ -65,11 +65,5 @@ public class Scanner : MonoBehaviour
         }
 
         return resourcesPosition;
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, _radius);
     }
 }

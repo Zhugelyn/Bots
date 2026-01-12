@@ -1,4 +1,3 @@
-using UnityEngine;
 using Infrastructure;
 
 namespace Workers.StateMachines.States
@@ -16,13 +15,13 @@ namespace Workers.StateMachines.States
         {
             _worker.Speed = 0;
             _worker.Animation.PickUp();
-            _worker.Animation.PickUpFinished += SetDestination;
+            _worker.Animation.OnPickUpCompleted += SetDestination;
         }
 
         public override void Exit()
         {
-            _worker.Animation.PickUpFinished -= SetDestination;
-            _worker.Resource.UpdateState(_worker.ResourcePosition);
+            _worker.Animation.OnPickUpCompleted -= SetDestination;
+            _worker.Resource.UpdateState(_worker.ResourceCarryPoint);
         }
 
         public void SetDestination()
