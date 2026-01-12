@@ -1,3 +1,4 @@
+using UnityEngine;
 using Infrastructure;
 
 namespace Workers.StateMachines.States
@@ -15,7 +16,6 @@ namespace Workers.StateMachines.States
         {
             _worker.Animation.Idle();
             _worker.CompleteTask();
-            _worker.DropResource();
             _worker.Speed = 0;
         }
     }

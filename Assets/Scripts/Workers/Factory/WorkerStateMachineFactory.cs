@@ -7,16 +7,27 @@ namespace Workers.Factory
 {
     public class WorkerStateMachineFactory : MonoBehaviour
     {
-        public void Create(Worker worker)
+        public StateMachine Create(Worker worker)
         {
-            IStateChanger stateMachines = new StateMachine();
+            var stateMachines = new StateMachine();
 
             var collectionState = new CollectionState(stateMachines, worker);
             var idleState = new IdleState(stateMachines, worker);
             var movementState = new MovementState(stateMachines, worker);
 
-            var toIdle = new ToCollectionStateTransition(movementState, worker);
-            var idleStateTransition = new ToIdleStateTransition(movementState, worker);
+            var toCollectionStateTransition = new ToCollectionStateTransition(collectionState, worker);
+            var toIdleStateTransition = new ToIdleStateTransition(idleState, worker);
+            var toResourceMoveTransition = new ToMovementStateTransition(movementState, worker);
+            var toBaseMoveTransition = new ToMovementStateTransition(movementState, worker);
+            
+            collectionState.AddTransition(toBaseMoveTransition);
+            idleState.AddTransition(toResourceMoveTransition);
+            movementState.AddTransition(toCollectionStateTransition);
+            movementState.AddTransition(toIdleStateTransition);
+            
+            stateMachines.ChangeState(idleState);
+            
+            return stateMachines;
         }
     }
 }

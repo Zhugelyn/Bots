@@ -1,3 +1,4 @@
+using UnityEngine;
 using Infrastructure;
 
 namespace Workers.StateMachines.Transitions
@@ -13,8 +14,10 @@ namespace Workers.StateMachines.Transitions
 
         protected override bool CanTransit()
         {
-            return _worker.Resource is null && 
-                   _worker.DestinationPoint != _worker.Base.transform.position;
+            if (_worker.IsMove || _worker.Resource != null)
+                return false;
+            
+            return _worker.DestinationPoint == _worker.Base.transform.position;
         }
     }
 }

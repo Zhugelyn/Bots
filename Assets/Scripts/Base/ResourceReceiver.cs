@@ -12,6 +12,7 @@ public class ResourceReceiver : MonoBehaviour
             if (worker.Resource != null)
             {
                 Resource resource = worker.Resource;
+                worker.DropResource();
                 ResourceAccepted?.Invoke(resource);
             }
     }

@@ -6,8 +6,6 @@ namespace Workers.StateMachines.Transitions
 {
     public class ToMovementStateTransition : Transition
     {
-        private const float ReachedThreshold = 1f;
-        
         private Worker _worker;
         
         public ToMovementStateTransition(State nextState, Worker worker) : base(nextState)
@@ -17,8 +15,7 @@ namespace Workers.StateMachines.Transitions
 
         protected override bool CanTransit()
         {
-            float distance = Vector3.Distance(_worker.transform.position, _worker.DestinationPoint);
-            return distance <= ReachedThreshold;
+            return _worker.IsMove;
         }
     }
 }

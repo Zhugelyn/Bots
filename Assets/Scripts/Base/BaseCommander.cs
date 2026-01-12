@@ -37,9 +37,11 @@ public class BaseCommander : MonoBehaviour
     private void SendWorkerToGetResource(Vector3 position)
     {
         var worker = _base.GetFreeWorker();
-
+        
         if (worker == null)
             return;
+        
+        Debug.Log(worker.IsBusy);
         
         worker.SetDestinationPoint(position);
         _resourcePosition.Remove(position);

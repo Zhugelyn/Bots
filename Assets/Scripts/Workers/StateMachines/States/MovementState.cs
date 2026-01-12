@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Infrastructure;
 
@@ -25,26 +24,19 @@ namespace Workers.StateMachines.States
         public override void Enter()
         {
             _worker.ResourceDiscovery.Discovered += PickUpResource;
-            _worker.Base.ResourceReceiver.ResourceAccepted += DropResource;
             _worker.Animation.Move();
             _worker.AssignTask();
-            _worker.Speed = _worker.Resource is not null ? _speedWithResource : _speedWithoutResource;
+            _worker.Speed = _worker.Resource != null ? _speedWithResource : _speedWithoutResource;
         }
 
         public override void Exit()
         {
             _worker.ResourceDiscovery.Discovered -= PickUpResource;
-            _worker.Base.ResourceReceiver.ResourceAccepted -= DropResource;
         }
 
         private void PickUpResource(Resource resource)
         {
             _worker.PickUpResource(resource);
-        }
-
-        private void DropResource(Resource resource)
-        {
-            _worker.DropResource();
         }
     }
 }

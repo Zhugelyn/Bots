@@ -1,3 +1,4 @@
+using UnityEngine;
 using Infrastructure;
 
 namespace Workers.StateMachines.Transitions
@@ -13,8 +14,13 @@ namespace Workers.StateMachines.Transitions
 
         protected override bool CanTransit()
         {
+            var offsetY = new Vector3(0, 0, 0);
+            
+            if (_worker.Resource is not null)
+                offsetY = new Vector3(0, _worker.Resource.transform.position.y, 0);
+            
             return _worker.Resource is not null && 
-                   _worker.DestinationPoint == _worker.Resource.transform.position;
+                   _worker.DestinationPoint == _worker.Resource.transform.position - offsetY;
         }
     }
 }
