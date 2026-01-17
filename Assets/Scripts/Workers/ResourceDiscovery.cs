@@ -1,12 +1,9 @@
-using System;
 using UnityEngine;
 
 namespace Workers
 {
     public class ResourceDiscovery : MonoBehaviour
     {
-        public event Action<Resource> Discovered;
-
         private Worker _worker;
 
         public void Initialize(Worker worker)
@@ -21,7 +18,7 @@ namespace Workers
             if (other.TryGetComponent(out Resource resource)
                 && other.transform.position - offsetY == _worker.DestinationPoint)
             {
-                Discovered?.Invoke(resource);
+                _worker.PickUpResource(resource);
             }
         }
     }

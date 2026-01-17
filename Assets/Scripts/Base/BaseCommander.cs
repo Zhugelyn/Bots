@@ -1,50 +1,21 @@
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+using Workers;
 
-public class BaseCommander : MonoBehaviour
+public class BaseCommander
 {
-    [SerializeField] private Base _base;
-    [SerializeField] private Scanner _scanner;
+    private ResourceTaskQueue _taskQueue;
 
-    [SerializeField] private List<Vector3> _resourcePosition;
-
-    private void Awake()
+    public BaseCommander(ResourceTaskQueue resourceTaskQueue)
     {
-        Initialize();
+        _taskQueue = resourceTaskQueue;
     }
 
-    private void OnDisable()
+    public void AssignTask(Worker worker)
     {
-        _scanner.ResourcesFound -= AddPositions;
-    }
-
-    private void Update()
-    {
-        if (_resourcePosition.Any())
-            SendWorkerToGetResource(_resourcePosition.First());
-    }
-    
-    public void Initialize()
-    {
-        _resourcePosition = new List<Vector3>();
-
-        _scanner.ResourcesFound += AddPositions;
-    }
-
-    private void SendWorkerToGetResource(Vector3 position)
-    {
-        var worker = _base.GetFreeWorker();
-        
-        if (worker == null)
+        if (_taskQueue.HasTasks == false || worker == null)
             return;
-        
-        Debug.Log(worker.IsBusy);
-        
-        worker.SetDestinationPoint(position);
-        _resourcePosition.Remove(position);
-    }
 
-    private void AddPositions(List<Vector3> resources) => 
-        _resourcePosition.AddRange(resources);
+        Vector3 position = _taskQueue.GetNext();
+        worker.SetDestinationPoint(position);
+    }
 }

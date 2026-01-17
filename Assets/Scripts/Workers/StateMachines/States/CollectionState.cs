@@ -24,9 +24,9 @@ namespace Workers.StateMachines.States
             _worker.Resource.UpdateState(_worker.ResourceCarryPoint);
         }
 
-        public void SetDestination()
+        private void SetDestination()
         {
-            _worker.SetDestinationPoint(_worker.Base.transform.position);
+            _worker.SetDestinationPoint(_worker.BasePosition);
         }
     }
 }

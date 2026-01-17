@@ -14,13 +14,7 @@ namespace Workers.StateMachines.Transitions
 
         protected override bool CanTransit()
         {
-            var offsetY = new Vector3(0, 0, 0);
-            
-            if (_worker.HasResource)
-                offsetY = new Vector3(0, _worker.Resource.transform.position.y, 0);
-            
-            return _worker.HasResource && 
-                   _worker.DestinationPoint == _worker.Resource.transform.position - offsetY;
+            return _worker.DestinationPoint == _worker.transform.position;
         }
     }
 }

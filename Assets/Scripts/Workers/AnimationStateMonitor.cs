@@ -8,10 +8,10 @@ namespace Workers
         private const int LayerIndex = 0;
         private const float CompletitionTime = 1f;
 
-        public event Action OnPickUpFinished;
-
         private Animator _animator;
         private AnimatorStateInfo _stateInfo;
+        
+        public event Action OnPickUpFinished;
 
         private void Update()
         {

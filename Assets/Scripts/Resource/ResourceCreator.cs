@@ -5,10 +5,11 @@ using Random = UnityEngine.Random;
 [RequireComponent(typeof(BoxCollider))]
 public class ResourceCreator : UniversalObjectPool<Resource>
 {
-    [field: SerializeField] public float SpawnDelay { get; private set; }
     [SerializeField] private ResourceReceiver _resourceReceiver;
     
     private BoxCollider _boxCollider;
+    
+    [field: SerializeField] public float SpawnDelay { get; private set; }
     
     private void OnEnable()
     {

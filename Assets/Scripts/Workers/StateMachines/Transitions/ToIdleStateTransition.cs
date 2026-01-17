@@ -13,10 +13,8 @@ namespace Workers.StateMachines.Transitions
 
         protected override bool CanTransit()
         {
-            if (_worker.IsMove || _worker.HasResource)
-                return false;
-            
-            return _worker.DestinationPoint == _worker.Base.transform.position;
+            return _worker.DestinationPoint == _worker.BasePosition && 
+                   _worker.HasResource == false;
         }
     }
 }

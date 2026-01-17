@@ -6,6 +6,8 @@ public class Resource : MonoBehaviour, ICollectable
 {
     [SerializeField] private ResourceType _type;
     [SerializeField] private Rigidbody _rigidbody;
+    
+    public ResourceType Type => _type;
 
     public void Initialize(Vector3 position)
     {
@@ -20,11 +22,6 @@ public class Resource : MonoBehaviour, ICollectable
         _rigidbody.useGravity = false;
         transform.SetParent(target);
         transform.localPosition = new Vector3(0, 0, 0);
-    }
-
-    public ResourceType GetResourceType()
-    {
-        return _type;
     }
 }
 

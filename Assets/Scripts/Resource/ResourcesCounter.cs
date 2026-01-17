@@ -7,9 +7,9 @@ public class ResourcesCounter : MonoBehaviour
 {
     [SerializeField] private ResourceReceiver _resourceReceiver;
     
-    public event Action<Dictionary<ResourceType, int>> Changed;
-    
     private Dictionary<ResourceType, int> _resourcesCount;
+    
+    public event Action<Dictionary<ResourceType, int>> Changed;
 
     private void Awake()
     {
@@ -29,13 +29,13 @@ public class ResourcesCounter : MonoBehaviour
     private void ChangeResourceCount(Resource resource)
     {
         int startResourceCount = 1;
-        ResourceType type = resource.GetResourceType();
+        ResourceType type = resource.Type;
         var needType = _resourcesCount.Where(r => r.Key == type);
 
         if (needType.Any())
             _resourcesCount[type]++;
         else
-            _resourcesCount.Add(resource.GetResourceType(), startResourceCount);
+            _resourcesCount.Add(resource.Type, startResourceCount);
         
         Changed?.Invoke(_resourcesCount);
     }
