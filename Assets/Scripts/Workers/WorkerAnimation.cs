@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Workers
@@ -7,10 +8,10 @@ namespace Workers
     public class WorkerAnimation : MonoBehaviour
     {
         [SerializeField] private Animator _animator;
-
-        private AnimationStateMonitor _monitor;
         
         public event Action OnPickUpCompleted;
+
+        private AnimationStateMonitor _monitor;
 
         private void Awake()
         {
@@ -23,25 +24,31 @@ namespace Workers
             OnPickUpCompleted?.Invoke();
         }
 
-        private void Setup(float speed, bool isPickUp)
+        private void Setup(float speed, bool isPickUp, bool isBuild) 
         {
             _animator.SetFloat(WorkerAnimatorData.Params.Speed, speed);
             _animator.SetBool(WorkerAnimatorData.Params.IsPickUp, isPickUp);
+            _animator.SetBool(WorkerAnimatorData.Params.IsBuild, isBuild);
         }
 
         public void Move()
         {
-            Setup(1f, false);
+            Setup(1f, false, false);
         }
 
         public void PickUp()
         {
-            Setup(0f, true);
+            Setup(0f, true, false);
         }
 
         public void Idle()
         {
-            Setup(0f, false);
+            Setup(0f, false, false);
+        }
+
+        public void Build()
+        {
+            Setup(0f, false, true);
         }
     }
 }

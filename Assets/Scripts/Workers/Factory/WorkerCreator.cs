@@ -5,8 +5,7 @@ namespace Workers.Factory
 {
     public class WorkerCreator : UniversalObjectPool<Worker>
     {
-        [SerializeField] private Base _base;
-        [SerializeField] private Transform _spawnPosition;
+        [SerializeField] private Transform _basePosition;
 
         private int _startWorkersCount = 3;
         
@@ -18,10 +17,10 @@ namespace Workers.Factory
                 Create();
         }
         
-        private void Create()
+        public void Create()
         {
             Worker worker = Pool.Get();
-            worker.Initialize(_base.GatheringPointWorkers.position, _spawnPosition.position);
+            worker.Initialize(_basePosition.position);
             WorkerCreated?.Invoke(worker);
         }
     }

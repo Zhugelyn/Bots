@@ -18,4 +18,9 @@ public class BaseCommander
         Vector3 position = _taskQueue.GetNext();
         worker.SetDestinationPoint(position);
     }
+
+    public void BuildNewBase(Worker worker, Vector3 buildPosition)
+    {
+        worker.BuildAt(buildPosition);
+    }
 }

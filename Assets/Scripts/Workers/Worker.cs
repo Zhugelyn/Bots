@@ -10,22 +10,26 @@ namespace Workers
     [RequireComponent(typeof(WorkerStateMachineFactory))]
     public class Worker : MonoBehaviour
     {
-        private int _speed;
+        [SerializeField] private int _speed;
         private int _maxSpeed;
         private int _minSpeed;
         private StateMachine _stateMachine;
         
+        public event Action<Vector3> OnStartBuild;
+
         public bool HasResource => Resource != null;
 
         [field: SerializeField] public Transform ResourceCarryPoint { get; private set; }
         public bool IsBusy { get; private set; }
         public bool IsMove { get; private set; }
-        public Vector3 DestinationPoint { get; private set; }
+        [field: SerializeField] public Vector3 DestinationPoint { get; private set; }
         public Vector3 BasePosition { get; private set; }
         public Resource Resource { get; private set; }
-        public ResourceDiscovery ResourceDiscovery { get; private set; } 
+        public ResourceDiscovery ResourceDiscovery { get; private set; }
         public WorkerAnimation Animation { get; private set; }
         public Mover Mover { get; private set; }
+        public WorkerRole Role { get; private set; }
+        public bool IsBuild { get; private set; }
 
         public int Speed
         {
@@ -44,19 +48,21 @@ namespace Workers
             _stateMachine?.Update();
         }
 
-        public void Initialize(Vector3 basePosiiton, Vector3 spawnPosition)
+        public void Initialize(Vector3 basePosiiton)
         {
             _maxSpeed = 10;
             _minSpeed = 0;
             _speed = _minSpeed;
-            transform.position = spawnPosition;
+            transform.position = basePosiiton;
             BasePosition = basePosiiton;
             IsBusy = false;
             IsMove = false;
+            IsBuild = false;
+            Role = WorkerRole.Collector;
             _stateMachine = GetComponent<WorkerStateMachineFactory>().Create(this);
-            
+
             ResourceDiscovery.Initialize(this);
-            
+
             Mover = new Mover(transform);
         }
 
@@ -73,7 +79,7 @@ namespace Workers
         {
             if (resource == null)
                 throw new ArgumentNullException(nameof(resource));
-            
+
             IsMove = false;
             Resource = resource;
         }
@@ -84,12 +90,35 @@ namespace Workers
             IsMove = false;
         }
 
+        public void BuildAt(Vector3 position)
+        {
+            DestinationPoint = position;
+            Role = WorkerRole.Builder;
+            IsMove = true;
+        }
+
+        public void ReserveBuilder()
+        {
+            Role = WorkerRole.Builder;
+        }
+
+        public void SetBuildStatus(bool isBuild)
+        {
+            IsBuild = isBuild;
+        }
+
         public void SetDestinationPoint(Vector3 point)
         {
             var offsetY = new Vector3(0, point.y, 0);
-            
+
             DestinationPoint = point - offsetY;
             IsMove = true;
         }
     }
+}
+
+public enum WorkerRole
+{
+    Builder,
+    Collector
 }

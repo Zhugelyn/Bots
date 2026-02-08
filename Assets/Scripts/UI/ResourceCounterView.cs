@@ -1,37 +1,51 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
 public class ResourceCounterView : MonoBehaviour
 {
-    [SerializeField] private List<TMP_Text> _resourceCountTexts;
-    [SerializeField] private ResourcesCounter _resourcesCounter;
+    [SerializeField] private ResourceCellView _woodCellView;
+    [SerializeField] private ResourceCellView _stoneCellView;
+    [SerializeField] private ResourceCellView _goldCellView;
 
-    private void OnEnable()
-    {
-        _resourcesCounter.Changed += UpdateResourceCount;
-    }
+    private ResourcesCounter _resourcesCounter;
+    private Dictionary<ResourceType, int> _;
 
     private void OnDisable()
     {
-        _resourcesCounter.Changed -= UpdateResourceCount;
+        Unbind();
     }
 
-    private void UpdateResourceCount(Dictionary<ResourceType, int> resourcesCount)
+    public void Bind(ResourcesCounter resourcesCounter)
     {
-        foreach (var resourceCountText in _resourceCountTexts)
-        {
-            if (Enum.TryParse(resourceCountText.name, true, out ResourceType resourceType))
-            {
-                if (resourcesCount.TryGetValue(resourceType, out int value))
-                    resourceCountText.text = SetDisplay(value);
-            }
-        }
+        if (resourcesCounter == null)
+            return;
+        
+        Unbind();
+        
+        _resourcesCounter = resourcesCounter;
+        _resourcesCounter.Changed += Refresh;
+        Refresh(_);
     }
 
-    private string SetDisplay(int count)
+    private void Unbind()
     {
-       return $"{count}";
+        if (_resourcesCounter != null)
+            _resourcesCounter.Changed -= Refresh;
+        
+        _resourcesCounter = null;
+    }
+
+    public void Refresh(Dictionary<ResourceType, int> _)
+    {
+        if (_resourcesCounter == null)
+            return;
+
+        var woodCount = _resourcesCounter.GetResourceCount(ResourceType.Wood);
+        _woodCellView.SetText(woodCount);
+        var stoneCount = _resourcesCounter.GetResourceCount(ResourceType.Stone);
+        _stoneCellView.SetText(stoneCount);
+        var goldCount = _resourcesCounter.GetResourceCount(ResourceType.Gold);
+        _goldCellView.SetText(goldCount);
     }
 }

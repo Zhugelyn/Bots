@@ -29,5 +29,5 @@ public enum ResourceType
 {
     Stone,
     Gold,
-    Log
+    Wood
 }

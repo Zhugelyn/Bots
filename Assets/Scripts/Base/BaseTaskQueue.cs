@@ -1,0 +1,38 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+public class BaseTaskQueue
+{
+    private List<Task> _tasks;
+
+    public event Action OnChange;
+
+    public BaseTaskQueue()
+    {
+        _tasks = new List<Task>();
+    }
+
+    public void AddTask(Task task)
+    {
+        _tasks.Add(task);
+        OnChange?.Invoke();
+    }
+
+    public void RemoveTask(Task task)
+    {
+        _tasks.Remove(task);
+        OnChange?.Invoke();
+    }
+
+    public Task GetMostPriorityTasks()
+    {
+        var task = _tasks.Where(task => task.Priority == TaskPriority.High).FirstOrDefault();
+        
+        if (task == null)
+            task = _tasks.OrderBy(task => task.Id).FirstOrDefault();
+        
+        return task; 
+    }
+}

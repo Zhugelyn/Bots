@@ -14,7 +14,8 @@ namespace Workers.StateMachines.Transitions
         protected override bool CanTransit()
         {
             return _worker.DestinationPoint == _worker.BasePosition && 
-                   _worker.HasResource == false;
+                   _worker.HasResource == false &&
+                   _worker.IsBusy == false;
         }
     }
 }

@@ -1,0 +1,89 @@
+{
+    "name": "CameraActions",
+    "maps": [
+        {
+            "name": "Move",
+            "id": "e62e9bf1-ea28-420b-a2e3-ceba7a86885e",
+            "actions": [
+                {
+                    "name": "WASD",
+                    "type": "Button",
+                    "id": "dbf222e1-b2ed-4afc-b892-24113852ad3c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "Z Axis",
+                    "id": "c92022be-8313-4ecf-80b5-1a83b1f4a4b2",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "WASD",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Negative",
+                    "id": "67697540-cbad-44c3-b477-4354dbcab0d9",
+                    "path": "<Keyboard>/#(S)",
+                    "interactions": "",
+                    "processors": "Normalize(max=1)",
+                    "groups": "",
+                    "action": "WASD",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Positive",
+                    "id": "8371fcbd-cf1b-4b21-83ab-0f14e43c8aa7",
+                    "path": "<Keyboard>/#(W)",
+                    "interactions": "",
+                    "processors": "Normalize(max=1)",
+                    "groups": "",
+                    "action": "WASD",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "X Axis",
+                    "id": "3ceb66b9-cc16-41a8-8f0a-18169de1a41f",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "WASD",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "5d28c2b5-9c8a-4f58-98cf-d2f5b6b27451",
+                    "path": "<Keyboard>/#(D)",
+                    "interactions": "",
+                    "processors": "Normalize(max=1)",
+                    "groups": "",
+                    "action": "WASD",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "231bc86e-f53d-40e0-9a90-13d84bd3e141",
+                    "path": "<Keyboard>/#(A)",
+                    "interactions": "",
+                    "processors": "Normalize(max=1)",
+                    "groups": "",
+                    "action": "WASD",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

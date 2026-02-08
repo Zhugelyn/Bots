@@ -14,7 +14,8 @@ namespace Workers.StateMachines.Transitions
 
         protected override bool CanTransit()
         {
-            return _worker.DestinationPoint == _worker.transform.position;
+            return _worker.DestinationPoint == _worker.transform.position && 
+                   _worker.Role == WorkerRole.Collector;
         }
     }
 }

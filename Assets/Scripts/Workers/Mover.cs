@@ -13,6 +13,7 @@ namespace Workers
 
         public void MoveTo(Vector3 destination, float speed)
         {
+            Debug.Log("Moving to " + _transform.position);
             _transform.position = Vector3.MoveTowards(
                 _transform.position,
                 destination,

@@ -8,6 +8,7 @@ namespace Workers
         {
             public static readonly int Speed = Animator.StringToHash(nameof(Speed));
             public static readonly int IsPickUp = Animator.StringToHash(nameof(IsPickUp));
+            public static readonly int IsBuild = Animator.StringToHash(nameof(IsBuild));
         }
     }
 }

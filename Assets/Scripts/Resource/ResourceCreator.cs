@@ -6,6 +6,9 @@ using Random = UnityEngine.Random;
 public class ResourceCreator : UniversalObjectPool<Resource>
 {
     [SerializeField] private ResourceReceiver _resourceReceiver;
+    [SerializeField] private LayerMask _groundMask = -1;
+    [SerializeField, Min(0f)] private float _raycastExtraHeight = 25f;
+    [SerializeField, Min(0.1f)] private float _raycastMaxDistance = 250f;
     
     private BoxCollider _boxCollider;
     
@@ -50,13 +53,25 @@ public class ResourceCreator : UniversalObjectPool<Resource>
 
     private Vector3 GetRandomSpawnPoint()
     {
-        Vector3 center = _boxCollider.center;
-        Vector3 size = _boxCollider.size;
+        Bounds bounds = _boxCollider.bounds;
 
-        float randomX = Random.Range(-size.x / 2f, size.x / 2f);
-        float randomZ = Random.Range(-size.z / 2f, size.z / 2f);
-        float fixedY = 3f;
+        float randomX = Random.Range(bounds.min.x, bounds.max.x);
+        float randomZ = Random.Range(bounds.min.z, bounds.max.z);
 
-        return new Vector3(randomX, fixedY, randomZ) + transform.position + center;
+        Vector3 rayOrigin = new Vector3(randomX, bounds.max.y + _raycastExtraHeight, randomZ);
+
+        if (Physics.Raycast(
+                rayOrigin,
+                Vector3.down,
+                out RaycastHit hit,
+                _raycastMaxDistance,
+                _groundMask,
+                QueryTriggerInteraction.Ignore))
+        {
+            return hit.point;
+        }
+
+        // Fallback: at least keep it inside spawner bounds.
+        return new Vector3(randomX, bounds.center.y, randomZ);
     }
 }

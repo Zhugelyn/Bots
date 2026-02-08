@@ -11,11 +11,11 @@ TagManager:
   - Resource
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
+  - ResourceZone
+  - Base
+  - Ground
+  - PlacementZone
+  - Flag
   - 
   - 
   - 
