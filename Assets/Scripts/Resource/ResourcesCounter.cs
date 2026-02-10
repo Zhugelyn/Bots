@@ -5,11 +5,12 @@ using UnityEngine;
 
 public class ResourcesCounter : MonoBehaviour
 {
+    private const int QuantityPerUnit = 1;
+
     [SerializeField] private ResourceReceiver _resourceReceiver;
 
-    private int _quantityPerUnit = 1;
-    
     private Dictionary<ResourceType, int> _resourcesCount;
+
     public event Action<Dictionary<ResourceType, int>> Changed;
 
     private void Awake()
@@ -34,45 +35,70 @@ public class ResourcesCounter : MonoBehaviour
     {
         if (_resourcesCount.TryGetValue(resourceType, out int count))
             return count;
-        
+
         return 0;
     }
 
-    public bool TryCost(int amount)
+    public bool HasEnoughTotal(int totalAmount) =>
+        totalAmount > 0 && _resourcesCount.Values.Sum() >= totalAmount;
+
+    public bool TryCost(int totalAmount)
     {
-        if (_resourcesCount.All(resource => resource.Value >= amount))
-        {
-            foreach (var type in _resourcesCount.Keys.ToList())
-            {
-                 _resourcesCount[type] -= amount;
-            }
-            
-            Changed?.Invoke(new Dictionary<ResourceType, int>(_resourcesCount));
-            return true;
-        }
-        
-        return false;
+        if (HasEnoughTotal(totalAmount) == false)
+            return false;
+
+        SpendEvenly(totalAmount);
+        Changed?.Invoke(new Dictionary<ResourceType, int>(_resourcesCount));
+        return true;
     }
 
-    public void Refund(int amount)
+    public void Refund(int totalAmount)
     {
-        if (amount <= 0)
+        if (totalAmount <= 0)
             return;
 
-        foreach (var type in _resourcesCount.Keys.ToList())
-            _resourcesCount[type] += amount;
-
+        RefundEvenly(totalAmount);
         Changed?.Invoke(new Dictionary<ResourceType, int>(_resourcesCount));
     }
-    
+
+    private void SpendEvenly(int totalAmount)
+    {
+        int remaining = totalAmount;
+
+        while (remaining > 0)
+        {
+            ResourceType richestType = _resourcesCount
+                .OrderByDescending(r => r.Value)
+                .First().Key;
+
+            _resourcesCount[richestType]--;
+            remaining--;
+        }
+    }
+
+    private void RefundEvenly(int totalAmount)
+    {
+        int remaining = totalAmount;
+
+        while (remaining > 0)
+        {
+            ResourceType poorestType = _resourcesCount
+                .OrderBy(r => r.Value)
+                .First().Key;
+
+            _resourcesCount[poorestType]++;
+            remaining--;
+        }
+    }
+
     private void ChangeResourceCount(Resource resource)
     {
         ResourceType type = resource.Type;
 
         if (_resourcesCount.TryGetValue(type, out int current))
         {
-            _resourcesCount[type] = current + _quantityPerUnit;
-            
+            _resourcesCount[type] = current + QuantityPerUnit;
+
             Changed?.Invoke(new Dictionary<ResourceType, int>(_resourcesCount));
         }
     }

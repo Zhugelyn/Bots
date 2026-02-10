@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class BaseTaskScheduler : MonoBehaviour
 {
+    private const int BuildNewBaseCost = 5;
+    private const int CreateWorkerCost = 3;
+
     [SerializeField] private Base _base;
 
-    private int _buildNewBaseCostPerType = 5;
-    private int _createWorkerCostPerType = 3;
-    
     private void OnEnable()
     {
         _base.ResourceCounter.Changed += OnResourcesChanged;
@@ -23,17 +23,17 @@ public class BaseTaskScheduler : MonoBehaviour
     {
         if (_base == null || _base.ResourceCounter == null || _base.TaskQueue == null)
             return;
-        
+
         if (_base.Mode == Mode.BuildNewBase)
-            TryScheduleBuildNewBase(resources);
-        
+            TryScheduleBuildNewBase();
+
         if (_base.Mode == Mode.CreateWorkers)
-            TryScheduleCreateWorker(resources);
+            TryScheduleCreateWorker();
     }
 
-    private void TryScheduleBuildNewBase(Dictionary<ResourceType, int> resources)
+    private void TryScheduleBuildNewBase()
     {
-        if (HasEnoughEachKnownType(resources, _buildNewBaseCostPerType) == false)
+        if (_base.ResourceCounter.HasEnoughTotal(BuildNewBaseCost) == false)
             return;
 
         if (_base.TaskQueue.HasTaskOfType<BuildBaseTask>())
@@ -42,19 +42,14 @@ public class BaseTaskScheduler : MonoBehaviour
         _base.TaskQueue.AddTask(new BuildBaseTask(TaskPriority.High, _base));
     }
 
-    private void TryScheduleCreateWorker(Dictionary<ResourceType, int> resources)
+    private void TryScheduleCreateWorker()
     {
-        if (HasEnoughEachKnownType(resources, _createWorkerCostPerType) == false)
+        if (_base.ResourceCounter.HasEnoughTotal(CreateWorkerCost) == false)
             return;
 
         if (_base.TaskQueue.HasTaskOfType<CreateWorkerTask>())
             return;
 
         _base.TaskQueue.AddTask(new CreateWorkerTask(TaskPriority.Normal, _base));
-    }
-
-    private static bool HasEnoughEachKnownType(Dictionary<ResourceType, int> resources, int amount)
-    {
-        return resources != null && resources.Count > 0 && resources.All(resource => resource.Value >= amount);
     }
 }

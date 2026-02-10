@@ -33,11 +33,6 @@ public class ResourceTaskQueue : MonoBehaviour
         return position;
     }
 
-    public void CompletePosition(Vector3 position)
-    {
-        _assignedPositions.Remove(position);
-    }
-
     private void AddTasks(List<Vector3> positions)
     {
         _assignedPositions.RemoveAll(assigned => positions.Contains(assigned) == false);

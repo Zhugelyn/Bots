@@ -11,10 +11,11 @@ public class Base : MonoBehaviour
     [SerializeField] private MeshRenderer _colorPart;
     [SerializeField] private bool _isStartBase;
     [SerializeField] private BaseConstructionPresenter _constructionPresenter;
-    
+
     private List<Worker> _workers;
     private BaseCommander _commander;
-    
+    private bool _IsModeMonitoting = false;
+
     [field: SerializeField] public Transform GatheringPointWorkers { get; private set; }
     [field: SerializeField] public ParticleSystem Particle { get; private set; }
     [field: SerializeField] public ResourceReceiver ResourceReceiver { get; private set; }
@@ -50,16 +51,19 @@ public class Base : MonoBehaviour
 
     private void Update()
     {
+        if (_IsModeMonitoting)
+            ChangeModeOnBuild();
+        
         _commander.AssignTask(GetWorker(false, WorkerRole.Collector));
     }
 
     public void Initialize()
     {
         _workers = new List<Worker>();
-        
+
         if (_resourceTaskQueue == null)
             _resourceTaskQueue = FindObjectOfType<ResourceTaskQueue>();
-        
+
         _commander = new BaseCommander(_resourceTaskQueue);
         TaskQueue = new BaseTaskQueue();
         MainColor = ColorExtension.GetRandomColor();
@@ -71,7 +75,11 @@ public class Base : MonoBehaviour
     {
         HasFlag = true;
         Flag = flag;
-        Mode = Mode.BuildNewBase;
+
+        if (_workers.Count > 1)
+            Mode = Mode.BuildNewBase;
+        else
+            _IsModeMonitoting = true;
     }
 
     public void RemoveFlag()
@@ -100,7 +108,7 @@ public class Base : MonoBehaviour
                 _constructionPresenter.OnConstructionComplete -= OnBaseConstructionComplete;
                 _constructionPresenter.OnConstructionComplete += OnBaseConstructionComplete;
             }
-            
+
             _commander.BuildNewBase(worker, Flag.transform.position);
             Mode = Mode.CreateWorkers;
             return true;
@@ -113,16 +121,16 @@ public class Base : MonoBehaviour
 
         return false;
     }
-    
+
     private void OnBaseConstructionComplete(Base newBase, Worker worker)
     {
         RemoveWorker(worker);
         worker.SetBase(newBase.GatheringPointWorkers.position);
         newBase.AddWorker(worker);
         RemoveFlag();
-        
+
         var resourceCreators = FindObjectsOfType<ResourceCreator>();
-        
+
         if (newBase.ResourceReceiver != null)
         {
             foreach (var creator in resourceCreators)
@@ -131,7 +139,7 @@ public class Base : MonoBehaviour
                     creator.RegisterReceiver(newBase.ResourceReceiver);
             }
         }
-        
+
         if (_constructionPresenter != null)
             _constructionPresenter.OnConstructionComplete -= OnBaseConstructionComplete;
     }
@@ -148,6 +156,15 @@ public class Base : MonoBehaviour
     public void RemoveWorker(Worker worker) =>
         _workers.Remove(worker);
     
+    private void ChangeModeOnBuild()
+    {
+        if (_workers.Count > 1)
+        {
+            Mode = Mode.BuildNewBase;
+            _IsModeMonitoting = false;
+        }
+    }
+
     private Worker GetWorker(WorkerRole role) =>
         _workers.FirstOrDefault(worker => role == worker.Role);
 

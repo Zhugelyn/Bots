@@ -8,7 +8,7 @@ public class Scanner : MonoBehaviour
     private const string ResourceLayerMask = "Resource";
     
     private float _radius = 150;
-    private int _scanDelay = 10;
+    private int _scanDelay = 15;
     private LayerMask _layerMask;
     
     public event Action<List<Vector3>> ResourcesFound;
@@ -47,7 +47,10 @@ public class Scanner : MonoBehaviour
 
         foreach (Collider collider in colliders)
         {
-            if (collider.TryGetComponent(out Resource _) == false)
+            if (collider.TryGetComponent(out Resource resource) == false)
+                continue;
+
+            if (resource.transform.parent != null)
                 continue;
             
             resourcesPosition.Add(collider.transform.position);

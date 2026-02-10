@@ -193,7 +193,7 @@ MonoBehaviour:
   _poolMaxSize: 10
   _initialReceivers:
   - {fileID: 3923421186572803455}
-  <SpawnDelay>k__BackingField: 10
+  <SpawnDelay>k__BackingField: 20
 --- !u!1 &60073261
 GameObject:
   m_ObjectHideFlags: 0
@@ -1057,7 +1057,7 @@ MonoBehaviour:
   _poolMaxSize: 10
   _initialReceivers:
   - {fileID: 3923421186572803455}
-  <SpawnDelay>k__BackingField: 10
+  <SpawnDelay>k__BackingField: 20
 --- !u!65 &748120348
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2322,7 +2322,7 @@ MonoBehaviour:
   _poolMaxSize: 10
   _initialReceivers:
   - {fileID: 3923421186572803455}
-  <SpawnDelay>k__BackingField: 10
+  <SpawnDelay>k__BackingField: 20
 --- !u!1001 &1230378095160289061
 PrefabInstance:
   m_ObjectHideFlags: 0

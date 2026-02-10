@@ -16,7 +16,8 @@ namespace Workers
             var offsetY = new Vector3(0, other.transform.position.y, 0);
             
             if (other.TryGetComponent(out Resource resource)
-                && other.transform.position - offsetY == _worker.DestinationPoint)
+                && other.transform.position - offsetY == _worker.DestinationPoint
+                && resource.TryClaim())
             {
                 _worker.PickUpResource(resource);
             }
