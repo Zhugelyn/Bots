@@ -10,12 +10,12 @@ public class FlagPlacementPresenter : IDisposable
     private FlagPreviewView _flagPreviewView;
     private PlaceChecker _placeChecker;
     private BaseClickView _baseClickView;
+    private Flag _flag;
+    private Base _currentBase;
     
     private bool _isPreview;
     private bool _canPlacement;
-    private Flag _flag;
 
-    private Base _currentBase;
 
     public FlagPlacementPresenter(FlagPreviewView flagPreviewView, PlaceChecker placeChecker, BaseClickView baseClickView)
     {
@@ -64,7 +64,7 @@ public class FlagPlacementPresenter : IDisposable
             return;
         
         _currentBase = selectedBase;
-        _flag = _flagPreviewView.CreateFlag(new Vector3(1f, 1f, 1f));
+        _flag = _flagPreviewView.CreateFlag(Vector3.zero);
         _isPreview = true;
     }
     
@@ -74,7 +74,7 @@ public class FlagPlacementPresenter : IDisposable
             _currentBase.RemoveFlag();
             
         _flagPreviewView.SetPlacementColor(_currentBase.MainColor);
-        _currentBase.Setflag(_flag);
+        _currentBase.SetFlag(_flag);
         _canPlacement = false;
         _isPreview = false;
     }

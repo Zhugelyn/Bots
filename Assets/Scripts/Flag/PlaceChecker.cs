@@ -7,6 +7,7 @@ public class PlaceChecker : MonoBehaviour
 {
     [SerializeField] private  BoxCollider _placementZone;
     [SerializeField] private List<string> _layerMasks = new List<string>();
+    
     private float _tresholdDistance = 10f;
     private LayerMask _mask;
     

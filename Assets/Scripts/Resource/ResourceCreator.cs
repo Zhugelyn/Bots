@@ -65,7 +65,6 @@ public class ResourceCreator : UniversalObjectPool<Resource>
 
         while (enabled)
         {
-            
             Resource resource = Pool.Get();
             Vector3 spawnPoint = GetRandomSpawnPoint();
             resource.Initialize(spawnPoint);

@@ -4956,8 +4956,12 @@ MonoBehaviour:
   _workerCreator: {fileID: 815167794388802111}
   _resourceTaskQueue: {fileID: 0}
   _colorPart: {fileID: 1777257928388157630}
+  _isStartBase: 0
+  _constructionPresenter: {fileID: 8105975968213811861}
   <GatheringPointWorkers>k__BackingField: {fileID: 2822296199718016880}
   <Particle>k__BackingField: {fileID: 6419908589675761429}
+  <ResourceReceiver>k__BackingField: {fileID: 1229708920170247723}
+  <ResourceCounter>k__BackingField: {fileID: 8790465769346225702}
 --- !u!114 &1229708920170247723
 MonoBehaviour:
   m_ObjectHideFlags: 0

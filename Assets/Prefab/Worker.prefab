@@ -185,6 +185,8 @@ MonoBehaviour:
   _speed: 0
   <ResourceCarryPoint>k__BackingField: {fileID: 7234631334826281321}
   <DestinationPoint>k__BackingField: {x: 0, y: 0, z: 0}
+  <ResourceDiscovery>k__BackingField: {fileID: 2226390802841539026}
+  <Animation>k__BackingField: {fileID: 9100709496248701398}
 --- !u!114 &9100709496248701398
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,7 +7,7 @@ public class BuildBaseTask : Task
         _base = @base;
     }
 
-    public override bool TryRun()
+    public override bool TryExecute()
     {
         if (_base.ResourceCounter.TryCost(5) == false)
             return false;

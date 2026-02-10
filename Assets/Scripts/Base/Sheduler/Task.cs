@@ -11,7 +11,7 @@ public abstract class Task
     public int Id { get; private set; }
     public TaskPriority Priority { get; private set; }
 
-    public virtual bool TryRun()
+    public virtual bool TryExecute()
     {
         return true;
     }

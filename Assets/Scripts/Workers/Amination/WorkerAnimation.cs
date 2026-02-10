@@ -9,9 +9,9 @@ namespace Workers
     {
         [SerializeField] private Animator _animator;
         
-        public event Action OnPickUpCompleted;
-
         private AnimationStateMonitor _monitor;
+        
+        public event Action OnPickUpCompleted;
 
         private void Awake()
         {

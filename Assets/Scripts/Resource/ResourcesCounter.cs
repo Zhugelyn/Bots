@@ -6,6 +6,8 @@ using UnityEngine;
 public class ResourcesCounter : MonoBehaviour
 {
     [SerializeField] private ResourceReceiver _resourceReceiver;
+
+    private int _quantityPerUnit = 1;
     
     private Dictionary<ResourceType, int> _resourcesCount;
     public event Action<Dictionary<ResourceType, int>> Changed;
@@ -69,7 +71,7 @@ public class ResourcesCounter : MonoBehaviour
 
         if (_resourcesCount.TryGetValue(type, out int current))
         {
-            _resourcesCount[type] = current + 3;
+            _resourcesCount[type] = current + _quantityPerUnit;
             
             Changed?.Invoke(new Dictionary<ResourceType, int>(_resourcesCount));
         }

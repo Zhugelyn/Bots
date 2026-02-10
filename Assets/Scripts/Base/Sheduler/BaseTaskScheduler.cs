@@ -24,10 +24,10 @@ public class BaseTaskScheduler : MonoBehaviour
         if (_base == null || _base.ResourceCounter == null || _base.TaskQueue == null)
             return;
         
-        if (_base.Mode == Mode.BuildNewBase && _base.GetWorkerCount() > 1)
+        if (_base.Mode == Mode.BuildNewBase)
             TryScheduleBuildNewBase(resources);
         
-        if (_base.Mode == Mode.CreateWorkers || _base.GetWorkerCount() < 2)
+        if (_base.Mode == Mode.CreateWorkers)
             TryScheduleCreateWorker(resources);
     }
 

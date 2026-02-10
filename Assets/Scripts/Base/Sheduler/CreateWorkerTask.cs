@@ -7,7 +7,7 @@ public class CreateWorkerTask : Task
         _base = @base;
     }
 
-    public override bool TryRun()
+    public override bool TryExecute()
     {
         if (_base.ResourceCounter.TryCost(3) && _base.TryCreateWorker())
             return true;

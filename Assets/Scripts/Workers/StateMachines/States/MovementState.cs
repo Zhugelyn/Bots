@@ -31,7 +31,7 @@ namespace Workers.StateMachines.States
         {
             _worker.Animation.Move();
             _worker.AssignTask();
-            _worker.Speed = _worker.HasResource ? _speedWithResource * 8 : _speedWithoutResource * 8;
+            _worker.Speed = _worker.HasResource ? _speedWithResource : _speedWithoutResource;
         }
     }
 }

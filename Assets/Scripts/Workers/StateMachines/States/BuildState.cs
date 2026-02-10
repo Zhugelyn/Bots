@@ -6,7 +6,7 @@ namespace Workers.StateMachines.States
     public class BuildState : State
     {
         private Worker _worker;
-        private float _animationDeltaY = 1.7f;
+        private float _animationDeltaY = 1.6f;
 
         public BuildState(IStateChanger stateChanger, Worker worker) : base(stateChanger)
         {

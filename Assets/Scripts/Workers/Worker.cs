@@ -5,43 +5,36 @@ using Workers.Factory;
 
 namespace Workers
 {
-    [RequireComponent(typeof(WorkerAnimation))]
-    [RequireComponent(typeof(ResourceDiscovery))]
     [RequireComponent(typeof(WorkerStateMachineFactory))]
     public class Worker : MonoBehaviour
     {
         [SerializeField] private int _speed;
-        private int _maxSpeed;
-        private int _minSpeed;
+        
+        private int _maxSpeed = 10;
+        private int _minSpeed = 0;
+        
         private StateMachine _stateMachine;
         
         public event Action<Vector3> BuildStarted;
 
-        public bool HasResource => Resource != null;
-
         [field: SerializeField] public Transform ResourceCarryPoint { get; private set; }
+        [field: SerializeField] public Vector3 DestinationPoint { get; private set; }
+        [field: SerializeField] public ResourceDiscovery ResourceDiscovery { get; private set; }
+        [field: SerializeField] public WorkerAnimation Animation { get; private set; }
         public bool IsBusy { get; private set; }
         public bool IsMove { get; private set; }
-        [field: SerializeField] public Vector3 DestinationPoint { get; private set; }
         public Vector3 BasePosition { get; private set; }
         public Resource Resource { get; private set; }
-        public ResourceDiscovery ResourceDiscovery { get; private set; }
-        public WorkerAnimation Animation { get; private set; }
         public Mover Mover { get; private set; }
         public WorkerRole Role { get; private set; }
         public bool IsBuild { get; private set; }
         public bool IsSentToBuild { get; private set; }
+        public bool HasResource => Resource != null;
 
         public int Speed
         {
             get => _speed;
             set => _speed = Mathf.Clamp(value, _minSpeed, _maxSpeed);
-        }
-
-        private void Awake()
-        {
-            Animation = GetComponent<WorkerAnimation>();
-            ResourceDiscovery = GetComponent<ResourceDiscovery>();
         }
 
         private void Update()
@@ -51,8 +44,6 @@ namespace Workers
 
         public void Initialize(Vector3 basePosiiton)
         {
-            _maxSpeed = 10;
-            _minSpeed = 0;
             _speed = _minSpeed;
             transform.position = basePosiiton;
             BasePosition = basePosiiton;
@@ -114,7 +105,6 @@ namespace Workers
         public void StartBuilding()
         {
             BuildStarted?.Invoke(DestinationPoint);
-            Debug.Log("Building started");
         }
 
         public void SetDestinationPoint(Vector3 point)

@@ -6,6 +6,7 @@ public class BaseTaskMonitoring : MonoBehaviour
     [SerializeField] private Base _base;
     
     private float _checkInterval = 5f;
+    
     private Coroutine _coroutine;
     private Task _currentTask;
 
@@ -37,7 +38,7 @@ public class BaseTaskMonitoring : MonoBehaviour
 
     private IEnumerator MonitorCoroutine()
     {
-        while (_currentTask.TryRun() == false)
+        while (_currentTask.TryExecute() == false)
         {
             yield return new WaitForSeconds(_checkInterval);
         }

@@ -15,8 +15,7 @@ namespace Workers.StateMachines.Transitions
 
         protected override bool CanTransit()
         {
-            bool isNearDestination = Vector3.Distance(
-                _worker.transform.position, _worker.DestinationPoint) < _arrivalThreshold;
+            bool isNearDestination = Vector3.Distance(_worker.transform.position, _worker.DestinationPoint) < _arrivalThreshold;
 
             return _worker.DestinationPoint == _worker.BasePosition &&
                    _worker.HasResource == false &&

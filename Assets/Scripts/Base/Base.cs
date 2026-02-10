@@ -1,28 +1,24 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Workers;
 using Workers.Factory;
 
-
-[RequireComponent(typeof(ResourceReceiver))]
-[RequireComponent(typeof(ResourcesCounter))]
 public class Base : MonoBehaviour
 {
     [SerializeField] private WorkerCreator _workerCreator;
     [SerializeField] private ResourceTaskQueue _resourceTaskQueue;
     [SerializeField] private MeshRenderer _colorPart;
     [SerializeField] private bool _isStartBase;
-
+    [SerializeField] private BaseConstructionPresenter _constructionPresenter;
+    
     private List<Worker> _workers;
     private BaseCommander _commander;
-    private BaseConstructionPresenter _constructionPresenter;
-
+    
     [field: SerializeField] public Transform GatheringPointWorkers { get; private set; }
     [field: SerializeField] public ParticleSystem Particle { get; private set; }
-    public ResourceReceiver ResourceReceiver { get; private set; }
-    public ResourcesCounter ResourceCounter { get; private set; }
+    [field: SerializeField] public ResourceReceiver ResourceReceiver { get; private set; }
+    [field: SerializeField] public ResourcesCounter ResourceCounter { get; private set; }
     public BaseTaskQueue TaskQueue { get; private set; }
     public Color MainColor { get; private set; }
     public bool HasFlag { get; private set; }
@@ -31,9 +27,6 @@ public class Base : MonoBehaviour
 
     private void Awake()
     {
-        ResourceReceiver = GetComponent<ResourceReceiver>();
-        ResourceCounter = GetComponent<ResourcesCounter>();
-        _constructionPresenter = GetComponent<BaseConstructionPresenter>();
         Initialize();
     }
 
@@ -74,7 +67,7 @@ public class Base : MonoBehaviour
         Mode = Mode.CreateWorkers;
     }
 
-    public void Setflag(Flag flag)
+    public void SetFlag(Flag flag)
     {
         HasFlag = true;
         Flag = flag;
@@ -120,7 +113,7 @@ public class Base : MonoBehaviour
 
         return false;
     }
-
+    
     private void OnBaseConstructionComplete(Base newBase, Worker worker)
     {
         RemoveWorker(worker);
@@ -149,22 +142,17 @@ public class Base : MonoBehaviour
         return true;
     }
 
-    public int GetWorkerCount()
-    {
-        return _workers.Count;
-    }
+    public void AddWorker(Worker worker) =>
+        _workers.Add(worker);
+
+    public void RemoveWorker(Worker worker) =>
+        _workers.Remove(worker);
     
     private Worker GetWorker(WorkerRole role) =>
         _workers.FirstOrDefault(worker => role == worker.Role);
 
     private Worker GetWorker(bool isBusy, WorkerRole role) =>
         _workers.FirstOrDefault(worker => worker.IsBusy == isBusy && role == worker.Role);
-
-    public void AddWorker(Worker worker) =>
-        _workers.Add(worker);
-
-    public void RemoveWorker(Worker worker) =>
-        _workers.Remove(worker);
 }
 
 public enum Mode

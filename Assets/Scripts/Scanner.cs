@@ -7,8 +7,8 @@ public class Scanner : MonoBehaviour
 {
     private const string ResourceLayerMask = "Resource";
     
-    private float _radius;
-    private int _scanDelay;
+    private float _radius = 150;
+    private int _scanDelay = 10;
     private LayerMask _layerMask;
     
     public event Action<List<Vector3>> ResourcesFound;
@@ -20,8 +20,6 @@ public class Scanner : MonoBehaviour
     
     public void Initialize()
     {
-        _radius = 150;
-        _scanDelay = 10;
         _layerMask = LayerMask.GetMask(ResourceLayerMask);
         
         StartCoroutine(StartScan());

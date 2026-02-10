@@ -27,7 +27,7 @@ public class BaseTaskQueue
 
     public Task GetMostPriorityTasks()
     {
-        var task = _tasks.Where(task => task.Priority == TaskPriority.High).FirstOrDefault();
+        var task = _tasks.FirstOrDefault(task => task.Priority == TaskPriority.High);
         
         if (task == null)
             task = _tasks.OrderBy(task => task.Id).FirstOrDefault();
