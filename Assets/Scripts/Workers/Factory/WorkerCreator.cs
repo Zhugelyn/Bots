@@ -11,7 +11,7 @@ namespace Workers.Factory
         
         public event Action<Worker> WorkerCreated;
         
-        private void Start()
+        public void CreateStartWorkers()
         {
             for (int i = 0; i < _startWorkersCount; i++)
                 Create();

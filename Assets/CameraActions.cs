@@ -25,93 +25,88 @@ public partial class @CameraActions: IInputActionCollection2, IDisposable
     ""maps"": [
         {
             ""name"": ""Move"",
-            ""id"": ""e62e9bf1-ea28-420b-a2e3-ceba7a86885e"",
+            ""id"": ""173b423c-1fe3-43ca-b254-1204c572e2f0"",
             ""actions"": [
                 {
-                    ""name"": ""WASD"",
-                    ""type"": ""Button"",
-                    ""id"": ""dbf222e1-b2ed-4afc-b892-24113852ad3c"",
-                    ""expectedControlType"": ""Button"",
+                    ""name"": ""XZ"",
+                    ""type"": ""Value"",
+                    ""id"": ""a3f0b116-2add-4c77-85a2-a47d8589b295"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
                 {
-                    ""name"": ""Z Axis"",
-                    ""id"": ""c92022be-8313-4ecf-80b5-1a83b1f4a4b2"",
-                    ""path"": ""1DAxis"",
+                    ""name"": ""2D Vector"",
+                    ""id"": ""e17a4c97-f735-4e23-8852-f1893177fb57"",
+                    ""path"": ""2DVector"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""WASD"",
+                    ""action"": ""XZ"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""Negative"",
-                    ""id"": ""67697540-cbad-44c3-b477-4354dbcab0d9"",
-                    ""path"": ""<Keyboard>/#(S)"",
-                    ""interactions"": """",
-                    ""processors"": ""Normalize(max=1)"",
-                    ""groups"": """",
-                    ""action"": ""WASD"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Positive"",
-                    ""id"": ""8371fcbd-cf1b-4b21-83ab-0f14e43c8aa7"",
-                    ""path"": ""<Keyboard>/#(W)"",
-                    ""interactions"": """",
-                    ""processors"": ""Normalize(max=1)"",
-                    ""groups"": """",
-                    ""action"": ""WASD"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""X Axis"",
-                    ""id"": ""3ceb66b9-cc16-41a8-8f0a-18169de1a41f"",
-                    ""path"": ""1DAxis"",
+                    ""name"": ""up"",
+                    ""id"": ""20f987a9-07d5-42f0-b89a-ea10a86f8847"",
+                    ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""WASD"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""negative"",
-                    ""id"": ""5d28c2b5-9c8a-4f58-98cf-d2f5b6b27451"",
-                    ""path"": ""<Keyboard>/#(D)"",
-                    ""interactions"": """",
-                    ""processors"": ""Normalize(max=1)"",
-                    ""groups"": """",
-                    ""action"": ""WASD"",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""XZ"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""positive"",
-                    ""id"": ""231bc86e-f53d-40e0-9a90-13d84bd3e141"",
-                    ""path"": ""<Keyboard>/#(A)"",
+                    ""name"": ""down"",
+                    ""id"": ""ebd45db7-7aa6-4308-a2e4-6544c388c332"",
+                    ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
-                    ""processors"": ""Normalize(max=1)"",
-                    ""groups"": """",
-                    ""action"": ""WASD"",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""XZ"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""9f1ccb1e-8773-4b8c-accf-8b285d53e342"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""XZ"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""4914a6c0-b79e-4a79-82bd-6c60984416b2"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""XZ"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 }
             ]
         }
     ],
-    ""controlSchemes"": []
+    ""controlSchemes"": [
+        {
+            ""name"": ""Keyboard"",
+            ""bindingGroup"": ""Keyboard"",
+            ""devices"": []
+        }
+    ]
 }");
         // Move
         m_Move = asset.FindActionMap("Move", throwIfNotFound: true);
-        m_Move_WASD = m_Move.FindAction("WASD", throwIfNotFound: true);
+        m_Move_XZ = m_Move.FindAction("XZ", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -173,12 +168,12 @@ public partial class @CameraActions: IInputActionCollection2, IDisposable
     // Move
     private readonly InputActionMap m_Move;
     private List<IMoveActions> m_MoveActionsCallbackInterfaces = new List<IMoveActions>();
-    private readonly InputAction m_Move_WASD;
+    private readonly InputAction m_Move_XZ;
     public struct MoveActions
     {
         private @CameraActions m_Wrapper;
         public MoveActions(@CameraActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @WASD => m_Wrapper.m_Move_WASD;
+        public InputAction @XZ => m_Wrapper.m_Move_XZ;
         public InputActionMap Get() { return m_Wrapper.m_Move; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -188,16 +183,16 @@ public partial class @CameraActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_MoveActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_MoveActionsCallbackInterfaces.Add(instance);
-            @WASD.started += instance.OnWASD;
-            @WASD.performed += instance.OnWASD;
-            @WASD.canceled += instance.OnWASD;
+            @XZ.started += instance.OnXZ;
+            @XZ.performed += instance.OnXZ;
+            @XZ.canceled += instance.OnXZ;
         }
 
         private void UnregisterCallbacks(IMoveActions instance)
         {
-            @WASD.started -= instance.OnWASD;
-            @WASD.performed -= instance.OnWASD;
-            @WASD.canceled -= instance.OnWASD;
+            @XZ.started -= instance.OnXZ;
+            @XZ.performed -= instance.OnXZ;
+            @XZ.canceled -= instance.OnXZ;
         }
 
         public void RemoveCallbacks(IMoveActions instance)
@@ -215,8 +210,17 @@ public partial class @CameraActions: IInputActionCollection2, IDisposable
         }
     }
     public MoveActions @Move => new MoveActions(this);
+    private int m_KeyboardSchemeIndex = -1;
+    public InputControlScheme KeyboardScheme
+    {
+        get
+        {
+            if (m_KeyboardSchemeIndex == -1) m_KeyboardSchemeIndex = asset.FindControlSchemeIndex("Keyboard");
+            return asset.controlSchemes[m_KeyboardSchemeIndex];
+        }
+    }
     public interface IMoveActions
     {
-        void OnWASD(InputAction.CallbackContext context);
+        void OnXZ(InputAction.CallbackContext context);
     }
 }

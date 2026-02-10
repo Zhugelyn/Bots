@@ -62,19 +62,6 @@ public class ResourcesCounter : MonoBehaviour
 
         Changed?.Invoke(new Dictionary<ResourceType, int>(_resourcesCount));
     }
-
-    public void RefundForType(ResourceType type, int amount)
-    {
-        if (amount <= 0)
-            return;
-
-        if (_resourcesCount.TryGetValue(type, out int current) == false)
-            _resourcesCount[type] = amount;
-        else
-            _resourcesCount[type] = current + amount;
-
-        Changed?.Invoke(new Dictionary<ResourceType, int>(_resourcesCount));
-    }
     
     private void ChangeResourceCount(Resource resource)
     {

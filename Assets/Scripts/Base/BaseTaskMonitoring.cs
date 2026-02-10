@@ -28,8 +28,6 @@ public class BaseTaskMonitoring : MonoBehaviour
         {
             _currentTask = _base.TaskQueue.GetMostPriorityTasks();
             
-            Debug.Log(_currentTask);
-            
             if (_currentTask == null)
                 return;
         }

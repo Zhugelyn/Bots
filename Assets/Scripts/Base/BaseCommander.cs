@@ -12,7 +12,7 @@ public class BaseCommander
 
     public void AssignTask(Worker worker)
     {
-        if (_taskQueue.HasTasks == false || worker == null)
+        if (_taskQueue == null || _taskQueue.HasTasks == false || worker == null)
             return;
 
         Vector3 position = _taskQueue.GetNext();

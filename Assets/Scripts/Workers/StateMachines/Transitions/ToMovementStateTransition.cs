@@ -15,7 +15,8 @@ namespace Workers.StateMachines.Transitions
 
         protected override bool CanTransit()
         {
-            return _worker.IsMove;
+            return _worker.IsMove &&
+                   _worker.IsBuild == false;
         }
     }
 }

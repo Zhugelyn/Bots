@@ -81,7 +81,12 @@ public class FlagPlacementPresenter : IDisposable
 
     private void CancelPreviewMode()
     {
-        _flagPreviewView.SetValid(false);
+        if (_flag != null)
+        {
+            UnityEngine.Object.Destroy(_flag.gameObject);
+            _flag = null;
+        }
+        
         _isPreview = false;
     }
 }

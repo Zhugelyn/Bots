@@ -21,12 +21,15 @@ namespace Workers.Factory
             var toResourceMoveTransition = new ToMovementStateTransition(movementState, worker);
             var toBaseMoveTransition = new ToMovementStateTransition(movementState, worker);
             var toBuildStateTransition = new ToBuildingStateTransition(buildState, worker);
+            var toIdleMoveStateTransition = new ToMovementStateTransition(movementState, worker);
             
             collectionState.AddTransition(toBaseMoveTransition);
             idleState.AddTransition(toResourceMoveTransition);
             movementState.AddTransition(toCollectionStateTransition);
             movementState.AddTransition(toIdleStateTransition);
+            movementState.AddTransition(toBuildStateTransition);
             buildState.AddTransition(toIdleStateTransition);
+            buildState.AddTransition(toIdleMoveStateTransition);
             
             stateMachines.ChangeState(idleState);
             

@@ -15,7 +15,7 @@ namespace Workers
         private int _minSpeed;
         private StateMachine _stateMachine;
         
-        public event Action<Vector3> OnStartBuild;
+        public event Action<Vector3> BuildStarted;
 
         public bool HasResource => Resource != null;
 
@@ -30,6 +30,7 @@ namespace Workers
         public Mover Mover { get; private set; }
         public WorkerRole Role { get; private set; }
         public bool IsBuild { get; private set; }
+        public bool IsSentToBuild { get; private set; }
 
         public int Speed
         {
@@ -58,6 +59,7 @@ namespace Workers
             IsBusy = false;
             IsMove = false;
             IsBuild = false;
+            IsSentToBuild = false;
             Role = WorkerRole.Collector;
             _stateMachine = GetComponent<WorkerStateMachineFactory>().Create(this);
 
@@ -94,6 +96,7 @@ namespace Workers
         {
             DestinationPoint = position;
             Role = WorkerRole.Builder;
+            IsSentToBuild = true;
             IsMove = true;
         }
 
@@ -104,7 +107,14 @@ namespace Workers
 
         public void SetBuildStatus(bool isBuild)
         {
+            IsMove = false;
             IsBuild = isBuild;
+        }
+
+        public void StartBuilding()
+        {
+            BuildStarted?.Invoke(DestinationPoint);
+            Debug.Log("Building started");
         }
 
         public void SetDestinationPoint(Vector3 point)
@@ -113,6 +123,17 @@ namespace Workers
 
             DestinationPoint = point - offsetY;
             IsMove = true;
+        }
+
+        public void SetBase(Vector3 basePosition)
+        {
+            BasePosition = basePosition;
+            Role = WorkerRole.Collector;
+            IsBusy = false;
+            IsMove = true;
+            IsSentToBuild = false;
+            IsBuild = false;
+            DestinationPoint = basePosition;
         }
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 public class BaseTaskQueue
 {
@@ -34,5 +33,10 @@ public class BaseTaskQueue
             task = _tasks.OrderBy(task => task.Id).FirstOrDefault();
         
         return task; 
+    }
+
+    public bool HasTaskOfType<T>() where T : Task
+    {
+        return _tasks.Any(task => task is T);
     }
 }

@@ -32,14 +32,18 @@ public class BaseSelectionPresenter : MonoBehaviour
 
     public void ChangeBase(Base newBase)
     {
-        if (_selectedBase != null)
-            return;
-        
         if (newBase == null)
             return;
+        
+        if (_selectedBase == newBase)
+            return;
+        
+        if (_selectedBase != null)
+            _baseView.StopSmoke(_selectedBase.Particle);
         
         _selectedBase = newBase;
         _resourceCounterView.Bind(_selectedBase.ResourceCounter);
         _baseView.SetColorBase(_selectedBase.MainColor);
+        _baseView.StartSmoke(_selectedBase.Particle, _selectedBase.MainColor);
     }
 }

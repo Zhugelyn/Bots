@@ -17,13 +17,21 @@ namespace Workers.StateMachines.States
         protected override void OnUpdate()
         {
             _worker.Mover.MoveTo(_worker.DestinationPoint, _worker.Speed);
+
+            if (_worker.transform.position == _worker.DestinationPoint
+                && _worker.HasResource == false
+                && _worker.DestinationPoint != _worker.BasePosition
+                && _worker.IsSentToBuild == false)
+            {
+                _worker.SetDestinationPoint(_worker.BasePosition);
+            }
         }
 
         public override void Enter()
         {
             _worker.Animation.Move();
             _worker.AssignTask();
-            _worker.Speed = _worker.HasResource ? _speedWithResource * 4 : _speedWithoutResource * 4;
+            _worker.Speed = _worker.HasResource ? _speedWithResource * 8 : _speedWithoutResource * 8;
         }
     }
 }

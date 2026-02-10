@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,13 +12,15 @@ public class Base : MonoBehaviour
 {
     [SerializeField] private WorkerCreator _workerCreator;
     [SerializeField] private ResourceTaskQueue _resourceTaskQueue;
-    [SerializeField] private Scanner _scanner;
     [SerializeField] private MeshRenderer _colorPart;
+    [SerializeField] private bool _isStartBase;
 
     private List<Worker> _workers;
     private BaseCommander _commander;
+    private BaseConstructionPresenter _constructionPresenter;
 
     [field: SerializeField] public Transform GatheringPointWorkers { get; private set; }
+    [field: SerializeField] public ParticleSystem Particle { get; private set; }
     public ResourceReceiver ResourceReceiver { get; private set; }
     public ResourcesCounter ResourceCounter { get; private set; }
     public BaseTaskQueue TaskQueue { get; private set; }
@@ -30,17 +33,26 @@ public class Base : MonoBehaviour
     {
         ResourceReceiver = GetComponent<ResourceReceiver>();
         ResourceCounter = GetComponent<ResourcesCounter>();
+        _constructionPresenter = GetComponent<BaseConstructionPresenter>();
         Initialize();
     }
 
     private void OnEnable()
     {
-        _workerCreator.WorkerCreated += AddWorker;
+        if (_workerCreator != null)
+            _workerCreator.WorkerCreated += AddWorker;
     }
 
     private void OnDisable()
     {
-        _workerCreator.WorkerCreated -= AddWorker;
+        if (_workerCreator != null)
+            _workerCreator.WorkerCreated -= AddWorker;
+    }
+
+    private void Start()
+    {
+        if (_isStartBase && _workerCreator != null)
+            _workerCreator.CreateStartWorkers();
     }
 
     private void Update()
@@ -51,6 +63,10 @@ public class Base : MonoBehaviour
     public void Initialize()
     {
         _workers = new List<Worker>();
+        
+        if (_resourceTaskQueue == null)
+            _resourceTaskQueue = FindObjectOfType<ResourceTaskQueue>();
+        
         _commander = new BaseCommander(_resourceTaskQueue);
         TaskQueue = new BaseTaskQueue();
         MainColor = ColorExtension.GetRandomColor();
@@ -78,11 +94,22 @@ public class Base : MonoBehaviour
         if (HasFlag == false)
             return false;
 
+        if (_workers.Count <= 1)
+            return false;
+
         var worker = GetWorker(WorkerRole.Builder);
 
         if (worker != null && worker.IsBusy == false)
         {
+            if (_constructionPresenter != null)
+            {
+                _constructionPresenter.SetWorker(worker);
+                _constructionPresenter.OnConstructionComplete -= OnBaseConstructionComplete;
+                _constructionPresenter.OnConstructionComplete += OnBaseConstructionComplete;
+            }
+            
             _commander.BuildNewBase(worker, Flag.transform.position);
+            Mode = Mode.CreateWorkers;
             return true;
         }
 
@@ -92,6 +119,28 @@ public class Base : MonoBehaviour
             worker.ReserveBuilder();
 
         return false;
+    }
+
+    private void OnBaseConstructionComplete(Base newBase, Worker worker)
+    {
+        RemoveWorker(worker);
+        worker.SetBase(newBase.GatheringPointWorkers.position);
+        newBase.AddWorker(worker);
+        RemoveFlag();
+        
+        var resourceCreators = FindObjectsOfType<ResourceCreator>();
+        
+        if (newBase.ResourceReceiver != null)
+        {
+            foreach (var creator in resourceCreators)
+            {
+                if (creator != null)
+                    creator.RegisterReceiver(newBase.ResourceReceiver);
+            }
+        }
+        
+        if (_constructionPresenter != null)
+            _constructionPresenter.OnConstructionComplete -= OnBaseConstructionComplete;
     }
 
     public bool TryCreateWorker()
@@ -111,8 +160,11 @@ public class Base : MonoBehaviour
     private Worker GetWorker(bool isBusy, WorkerRole role) =>
         _workers.FirstOrDefault(worker => worker.IsBusy == isBusy && role == worker.Role);
 
-    private void AddWorker(Worker worker) =>
+    public void AddWorker(Worker worker) =>
         _workers.Add(worker);
+
+    public void RemoveWorker(Worker worker) =>
+        _workers.Remove(worker);
 }
 
 public enum Mode

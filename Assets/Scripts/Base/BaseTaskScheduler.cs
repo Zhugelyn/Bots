@@ -36,12 +36,18 @@ public class BaseTaskScheduler : MonoBehaviour
         if (HasEnoughEachKnownType(resources, _buildNewBaseCostPerType) == false)
             return;
 
+        if (_base.TaskQueue.HasTaskOfType<BuildBaseTask>())
+            return;
+
         _base.TaskQueue.AddTask(new BuildBaseTask(TaskPriority.High, _base));
     }
 
     private void TryScheduleCreateWorker(Dictionary<ResourceType, int> resources)
     {
         if (HasEnoughEachKnownType(resources, _createWorkerCostPerType) == false)
+            return;
+
+        if (_base.TaskQueue.HasTaskOfType<CreateWorkerTask>())
             return;
 
         _base.TaskQueue.AddTask(new CreateWorkerTask(TaskPriority.Normal, _base));

@@ -9,9 +9,13 @@ public class BuildBaseTask : Task
 
     public override bool TryRun()
     {
-        if (_base.TryBuildNewBase() && _base.ResourceCounter.TryCost(5))
+        if (_base.ResourceCounter.TryCost(5) == false)
+            return false;
+        
+        if (_base.TryBuildNewBase())
             return true;
         
+        _base.ResourceCounter.Refund(5);
         return false;
     }
 }

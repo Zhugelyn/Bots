@@ -22,7 +22,9 @@ namespace Workers.StateMachines.States
         public override void Exit()
         {
             _worker.Animation.OnPickUpCompleted -= SetDestination;
-            _worker.Resource.UpdateState(_worker.ResourceCarryPoint);
+            
+            if (_worker.Resource != null)
+                _worker.Resource.UpdateState(_worker.ResourceCarryPoint);
         }
 
         private void SetDestination()

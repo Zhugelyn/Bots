@@ -10,4 +10,17 @@ public class BaseView : MonoBehaviour
         baseColor.a = 1f;
         _icon.color = baseColor;;
     }
+
+    public void StartSmoke(ParticleSystem particleSystem, Color color)
+    {
+        var main = particleSystem.main;
+        main.startColor = color;
+        particleSystem.Play();
+    }
+
+    public void StopSmoke(ParticleSystem particleSystem)
+    {
+        if (particleSystem.isPlaying)
+            particleSystem.Stop();
+    }
 }
