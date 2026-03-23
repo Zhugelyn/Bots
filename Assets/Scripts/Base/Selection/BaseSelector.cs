@@ -1,46 +1,37 @@
-using System;
 using UnityEngine;
 
-public class BaseSelectionPresenter : MonoBehaviour
+public class BaseSelector : MonoBehaviour
 {
-    [SerializeField] private Base _initializedBase;
+    [SerializeField] private BaseView _baseView;
     [SerializeField] private ResourceCounterView _resourceCounterView;
     [SerializeField] private BaseClickView _baseClickView;
-    [SerializeField] private BaseView _baseView;
+    [SerializeField] private Base _initialBase;
 
     private Base _selectedBase;
 
-    private void OnValidate()
+    private void Start()
     {
-        Debug.Assert(_initializedBase != null);
-    }
-
-    private void Awake()
-    {
-        ChangeBase(_initializedBase);
+        SelectBase(_initialBase);
     }
 
     private void OnEnable()
     {
-        _baseClickView.OnBaseChanged += ChangeBase;
+        _baseClickView.OnBaseChanged += SelectBase;
     }
 
     private void OnDisable()
     {
-        _baseClickView.OnBaseChanged -= ChangeBase;
+        _baseClickView.OnBaseChanged -= SelectBase;
     }
 
-    public void ChangeBase(Base newBase)
+    private void SelectBase(Base newBase)
     {
-        if (newBase == null)
+        if (newBase == null || newBase == _selectedBase)
             return;
-        
-        if (_selectedBase == newBase)
-            return;
-        
+
         if (_selectedBase != null)
             _baseView.StopSmoke(_selectedBase.Particle);
-        
+
         _selectedBase = newBase;
         _resourceCounterView.Bind(_selectedBase.ResourceCounter);
         _baseView.SetColorBase(_selectedBase.MainColor);

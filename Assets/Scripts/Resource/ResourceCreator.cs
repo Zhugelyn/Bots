@@ -1,79 +1,45 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(BoxCollider))]
 public class ResourceCreator : UniversalObjectPool<Resource>
 {
-    [SerializeField] private List<ResourceReceiver> _initialReceivers = new List<ResourceReceiver>();
+    [SerializeField] private ResourceProvider _resourceProvider;
 
     private BoxCollider _boxCollider;
-    private List<ResourceReceiver> _registeredReceivers = new List<ResourceReceiver>();
-    
+
     [field: SerializeField] public float SpawnDelay { get; private set; }
-    
+
     private void OnEnable()
     {
-        foreach (var receiver in _initialReceivers)
-        {
-            if (receiver != null)
-                RegisterReceiver(receiver);
-        }
+        _resourceProvider.ResourceRemoved += OnResourceRemoved;
     }
 
     private void OnDisable()
     {
-        foreach (var receiver in _registeredReceivers.ToArray())
-        {
-            UnregisterReceiver(receiver);
-        }
-    }
-
-    public void RegisterReceiver(ResourceReceiver receiver)
-    {
-        if (receiver == null)
-            return;
-        
-        if (_registeredReceivers.Contains(receiver))
-            return;
-        
-        receiver.ResourceAccepted -= ReturnToPool;
-        receiver.ResourceAccepted += ReturnToPool;
-        _registeredReceivers.Add(receiver);
-    }
-
-    public void UnregisterReceiver(ResourceReceiver receiver)
-    {
-        if (receiver == null)
-            return;
-        
-        receiver.ResourceAccepted -= ReturnToPool;
-        _registeredReceivers.Remove(receiver);
+        _resourceProvider.ResourceRemoved -= OnResourceRemoved;
     }
 
     private void Start()
     {
         _boxCollider = GetComponent<BoxCollider>();
-        
-        StartCoroutine(Create());
+        StartCoroutine(SpawnLoop());
     }
 
-    private IEnumerator Create()
+    private IEnumerator SpawnLoop()
     {
         var wait = new WaitForSeconds(SpawnDelay);
 
         while (enabled)
         {
             Resource resource = Pool.Get();
-            Vector3 spawnPoint = GetRandomSpawnPoint();
-            resource.Initialize(spawnPoint);
-
+            resource.Initialize(GetRandomSpawnPoint());
             yield return wait;
         }
     }
 
-    private void ReturnToPool(Resource resource)
+    private void OnResourceRemoved(Resource resource)
     {
         if (resource.Type == Prefab.Type)
             Pool.Release(resource);

@@ -7,8 +7,6 @@ public class ResourcesCounter : MonoBehaviour
 {
     private const int QuantityPerUnit = 1;
 
-    [SerializeField] private ResourceReceiver _resourceReceiver;
-
     private Dictionary<ResourceType, int> _resourcesCount;
 
     public event Action<Dictionary<ResourceType, int>> Changed;
@@ -21,16 +19,6 @@ public class ResourcesCounter : MonoBehaviour
             _resourcesCount[type] = 0;
     }
 
-    private void OnEnable()
-    {
-        _resourceReceiver.ResourceAccepted += ChangeResourceCount;
-    }
-
-    private void OnDisable()
-    {
-        _resourceReceiver.ResourceAccepted -= ChangeResourceCount;
-    }
-
     public int GetResourceCount(ResourceType resourceType)
     {
         if (_resourcesCount.TryGetValue(resourceType, out int count))
@@ -41,6 +29,17 @@ public class ResourcesCounter : MonoBehaviour
 
     public bool HasEnoughTotal(int totalAmount) =>
         totalAmount > 0 && _resourcesCount.Values.Sum() >= totalAmount;
+
+    public void Add(Resource resource)
+    {
+        ResourceType type = resource.Type;
+
+        if (_resourcesCount.TryGetValue(type, out int current))
+        {
+            _resourcesCount[type] = current + QuantityPerUnit;
+            Changed?.Invoke(new Dictionary<ResourceType, int>(_resourcesCount));
+        }
+    }
 
     public bool TryCost(int totalAmount)
     {
@@ -88,18 +87,6 @@ public class ResourcesCounter : MonoBehaviour
 
             _resourcesCount[poorestType]++;
             remaining--;
-        }
-    }
-
-    private void ChangeResourceCount(Resource resource)
-    {
-        ResourceType type = resource.Type;
-
-        if (_resourcesCount.TryGetValue(type, out int current))
-        {
-            _resourcesCount[type] = current + QuantityPerUnit;
-
-            Changed?.Invoke(new Dictionary<ResourceType, int>(_resourcesCount));
         }
     }
 }

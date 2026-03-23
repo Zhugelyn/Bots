@@ -1,15 +1,12 @@
 using UnityEngine;
 
-public class Resource : MonoBehaviour, ICollectable
+public class Resource : MonoBehaviour
 {
     [SerializeField] private ResourceType _type;
     [SerializeField] private Rigidbody _rigidbody;
     [SerializeField] private Collider _collider;
 
-    private bool _isClaimed;
-    
     public ResourceType Type => _type;
-    public bool IsClaimed => _isClaimed;
 
     public void Initialize(Vector3 position)
     {
@@ -20,36 +17,16 @@ public class Resource : MonoBehaviour, ICollectable
         _rigidbody.velocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
         transform.SetParent(null);
-
-        _isClaimed = false;
-        SetColliderEnabled(true);
-    }
-    
-    public void UpdateState(Transform target)
-    {
-        _rigidbody.useGravity = false;
-        _rigidbody.isKinematic = false;
-        transform.SetParent(target);
-        transform.localPosition = new Vector3(0, 0, 0);
+        _collider.enabled = true;
     }
 
-    public bool TryClaim()
+    public void AttachTo(Transform target)
     {
-        if (_isClaimed)
-            return false;
-
-        _isClaimed = true;
-        _rigidbody.velocity = Vector3.zero;
-        _rigidbody.angularVelocity = Vector3.zero;
         _rigidbody.useGravity = false;
         _rigidbody.isKinematic = true;
-        SetColliderEnabled(false);
-        return true;
-    }
-
-    private void SetColliderEnabled(bool enabled)
-    {
-        _collider.enabled = enabled;
+        _collider.enabled = false;
+        transform.SetParent(target);
+        transform.localPosition = Vector3.zero;
     }
 }
 

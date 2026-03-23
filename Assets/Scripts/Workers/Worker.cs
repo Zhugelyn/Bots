@@ -1,135 +1,138 @@
 using System;
-using Infrastructure;
+using System.Collections;
 using UnityEngine;
-using Workers.Factory;
 
 namespace Workers
 {
-    [RequireComponent(typeof(WorkerStateMachineFactory))]
     public class Worker : MonoBehaviour
     {
-        [SerializeField] private int _speed;
-        
-        private int _maxSpeed = 10;
-        private int _minSpeed = 0;
-        
-        private StateMachine _stateMachine;
-        
-        public event Action<Vector3> BuildStarted;
+        private const float BuildAnimationOffsetY = 1.6f;
 
-        [field: SerializeField] public Transform ResourceCarryPoint { get; private set; }
-        [field: SerializeField] public Vector3 DestinationPoint { get; private set; }
-        [field: SerializeField] public ResourceDiscovery ResourceDiscovery { get; private set; }
-        [field: SerializeField] public WorkerAnimation Animation { get; private set; }
+        [SerializeField] private Transform _resourceCarryPoint;
+        [SerializeField] private BotMovement _movement;
+        [SerializeField] private BotRotation _rotation;
+        [SerializeField] private WorkerAnimation _animation;
+
+        private Transform _homeBase;
+        private Coroutine _currentMission;
+        private bool _isPickUpDone;
+
+        public event Action<Worker, Vector3> BuildCompleted;
+
+        public Resource CarriedResource { get; private set; }
         public bool IsBusy { get; private set; }
-        public bool IsMove { get; private set; }
-        public Vector3 BasePosition { get; private set; }
-        public Resource Resource { get; private set; }
-        public Mover Mover { get; private set; }
-        public WorkerRole Role { get; private set; }
-        public bool IsBuild { get; private set; }
-        public bool IsSentToBuild { get; private set; }
-        public bool HasResource => Resource != null;
 
-        public int Speed
+        public void Initialize(Transform homeBase)
         {
-            get => _speed;
-            set => _speed = Mathf.Clamp(value, _minSpeed, _maxSpeed);
-        }
-
-        private void Update()
-        {
-            _stateMachine?.Update();
-        }
-
-        public void Initialize(Vector3 basePosiiton)
-        {
-            _speed = _minSpeed;
-            transform.position = basePosiiton;
-            BasePosition = basePosiiton;
+            _homeBase = homeBase;
+            transform.position = homeBase.position;
             IsBusy = false;
-            IsMove = false;
-            IsBuild = false;
-            IsSentToBuild = false;
-            Role = WorkerRole.Collector;
-            _stateMachine = GetComponent<WorkerStateMachineFactory>().Create(this);
-
-            ResourceDiscovery.Initialize(this);
-
-            Mover = new Mover(transform);
+            CarriedResource = null;
         }
 
-        public void AssignTask() =>
+        public void SetHomeBase(Transform homeBase)
+        {
+            _homeBase = homeBase;
+        }
+
+        public void SendToCollect(Resource resource)
+        {
+            if (_currentMission != null)
+                StopCoroutine(_currentMission);
+
+            _currentMission = StartCoroutine(Collect(resource));
+        }
+
+        public void SendToBuild(Vector3 buildPosition)
+        {
+            if (_currentMission != null)
+                StopCoroutine(_currentMission);
+
+            _currentMission = StartCoroutine(Build(buildPosition));
+        }
+
+        public void ReturnToBase()
+        {
+            if (_currentMission != null)
+                StopCoroutine(_currentMission);
+
+            _currentMission = StartCoroutine(GoToBase());
+        }
+
+        public void StopMission()
+        {
+            if (_currentMission != null)
+            {
+                StopCoroutine(_currentMission);
+                _currentMission = null;
+            }
+
+            IsBusy = false;
+            _animation.Idle();
+        }
+
+        public Resource TakeResource()
+        {
+            var resource = CarriedResource;
+            resource.transform.SetParent(null);
+            CarriedResource = null;
+            return resource;
+        }
+
+        private IEnumerator Collect(Resource resource)
+        {
             IsBusy = true;
 
-        public void CompleteTask()
-        {
+            _animation.Move();
+            yield return _rotation.SmoothLookAt(resource.transform);
+            yield return _movement.MoveTo(resource.transform);
+
+            if (resource.gameObject.activeInHierarchy == false)
+            {
+                IsBusy = false;
+                yield break;
+            }
+
+            resource.AttachTo(_resourceCarryPoint);
+            CarriedResource = resource;
+
+            _isPickUpDone = false;
+            _animation.OnPickUpCompleted += OnPickUpComplete;
+            _animation.PickUp();
+
+            yield return new WaitUntil(() => _isPickUpDone);
+            _animation.OnPickUpCompleted -= OnPickUpComplete;
+
+            _animation.Move();
+
+            yield return _rotation.SmoothLookAt(_homeBase);
+            yield return _movement.MoveTo(_homeBase);
+
             IsBusy = false;
-            IsMove = false;
         }
 
-        public void PickUpResource(Resource resource)
+        private IEnumerator GoToBase()
         {
-            if (resource == null)
-                throw new ArgumentNullException(nameof(resource));
-
-            IsMove = false;
-            Resource = resource;
-        }
-
-        public void DropResource()
-        {
-            Resource = null;
-            IsMove = false;
-        }
-
-        public void BuildAt(Vector3 position)
-        {
-            DestinationPoint = position;
-            Role = WorkerRole.Builder;
-            IsSentToBuild = true;
-            IsMove = true;
-        }
-
-        public void ReserveBuilder()
-        {
-            Role = WorkerRole.Builder;
-        }
-
-        public void SetBuildStatus(bool isBuild)
-        {
-            IsMove = false;
-            IsBuild = isBuild;
-        }
-
-        public void StartBuilding()
-        {
-            BuildStarted?.Invoke(DestinationPoint);
-        }
-
-        public void SetDestinationPoint(Vector3 point)
-        {
-            var offsetY = new Vector3(0, point.y, 0);
-
-            DestinationPoint = point - offsetY;
-            IsMove = true;
-        }
-
-        public void SetBase(Vector3 basePosition)
-        {
-            BasePosition = basePosition;
-            Role = WorkerRole.Collector;
+            IsBusy = true;
+            _animation.Move();
+            yield return _rotation.SmoothLookAt(_homeBase);
+            yield return _movement.MoveTo(_homeBase);
             IsBusy = false;
-            IsMove = true;
-            IsSentToBuild = false;
-            IsBuild = false;
-            DestinationPoint = basePosition;
         }
+
+        private IEnumerator Build(Vector3 buildPosition)
+        {
+            IsBusy = true;
+
+            yield return _rotation.SmoothLookAt(buildPosition);
+            yield return _movement.MoveTo(buildPosition);
+
+            transform.position += Vector3.up * BuildAnimationOffsetY;
+            _animation.Build();
+
+            BuildCompleted?.Invoke(this, buildPosition);
+        }
+
+        private void OnPickUpComplete() => _isPickUpDone = true;
     }
-}
-
-public enum WorkerRole
-{
-    Builder,
-    Collector
 }

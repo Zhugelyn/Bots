@@ -1,175 +1,227 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Workers;
 using Workers.Factory;
 
 public class Base : MonoBehaviour
 {
+    private const int BuildNewBaseCost = 5;
+    private const int CreateWorkerCost = 3;
+
     [SerializeField] private WorkerCreator _workerCreator;
-    [SerializeField] private ResourceTaskQueue _resourceTaskQueue;
+    [SerializeField] private ResourceProvider _resourceProvider;
     [SerializeField] private MeshRenderer _colorPart;
     [SerializeField] private bool _isStartBase;
-    [SerializeField] private BaseConstructionPresenter _constructionPresenter;
-
+    [SerializeField] private BaseBuilder _baseBuilder;
+    [SerializeField] private Scanner _scanner;
+    [SerializeField] private BotRetriever _botRetriever;
+    
     private List<Worker> _workers;
-    private BaseCommander _commander;
-    private bool _IsModeMonitoting = false;
-
+    private Flag _flag;
+    private Mode _mode;
+    
     [field: SerializeField] public Transform GatheringPointWorkers { get; private set; }
     [field: SerializeField] public ParticleSystem Particle { get; private set; }
-    [field: SerializeField] public ResourceReceiver ResourceReceiver { get; private set; }
     [field: SerializeField] public ResourcesCounter ResourceCounter { get; private set; }
-    public BaseTaskQueue TaskQueue { get; private set; }
     public Color MainColor { get; private set; }
-    public bool HasFlag { get; private set; }
-    public Flag Flag { get; private set; }
-    public Mode Mode { get; private set; }
+    public bool HasFlag => _flag != null;
 
     private void Awake()
     {
-        Initialize();
+        _workers = new List<Worker>();
+        MainColor = ColorExtension.GetRandomColor();
+        _colorPart.material.color = MainColor;
+        _mode = Mode.CreateWorkers;
     }
 
     private void OnEnable()
     {
         if (_workerCreator != null)
-            _workerCreator.WorkerCreated += AddWorker;
+            _workerCreator.WorkerCreated += OnWorkerCreated;
+
+        if (_scanner != null)
+            _scanner.ResourcesFound += OnResourcesFound;
+
+        if (_botRetriever != null)
+            _botRetriever.WorkerArrived += OnWorkerArrived;
+
+        if (_baseBuilder != null)
+            _baseBuilder.Built += OnBaseBuilt;
     }
 
     private void OnDisable()
     {
         if (_workerCreator != null)
-            _workerCreator.WorkerCreated -= AddWorker;
+            _workerCreator.WorkerCreated -= OnWorkerCreated;
+
+        if (_scanner != null)
+            _scanner.ResourcesFound -= OnResourcesFound;
+
+        if (_botRetriever != null)
+            _botRetriever.WorkerArrived -= OnWorkerArrived;
+
+        if (_baseBuilder != null)
+            _baseBuilder.Built -= OnBaseBuilt;
     }
 
     private void Start()
     {
-        if (_isStartBase && _workerCreator != null)
+        if (_isStartBase)
             _workerCreator.CreateStartWorkers();
     }
 
-    private void Update()
+    public void SetResourceProvider(ResourceProvider resourceProvider)
     {
-        if (_IsModeMonitoting)
-            ChangeModeOnBuild();
-        
-        _commander.AssignTask(GetWorker(false, WorkerRole.Collector));
+        _resourceProvider = resourceProvider;
     }
 
-    public void Initialize()
+    public void SetScanner(Scanner scanner)
     {
-        _workers = new List<Worker>();
-
-        if (_resourceTaskQueue == null)
-            _resourceTaskQueue = FindObjectOfType<ResourceTaskQueue>();
-
-        _commander = new BaseCommander(_resourceTaskQueue);
-        TaskQueue = new BaseTaskQueue();
-        MainColor = ColorExtension.GetRandomColor();
-        _colorPart.material.color = MainColor;
-        Mode = Mode.CreateWorkers;
+        _scanner = scanner;
+        _scanner.ResourcesFound += OnResourcesFound;
     }
 
     public void SetFlag(Flag flag)
     {
-        HasFlag = true;
-        Flag = flag;
-
-        if (_workers.Count > 1)
-            Mode = Mode.BuildNewBase;
-        else
-            _IsModeMonitoting = true;
+        _flag = flag;
+        TryEnterBuildMode();
     }
 
     public void RemoveFlag()
     {
-        Destroy(Flag.gameObject);
-        HasFlag = false;
-        Flag = null;
-        Mode = Mode.CreateWorkers;
+        if (_flag != null)
+        {
+            Destroy(_flag.gameObject);
+            _flag = null;
+        }
+
+        _mode = Mode.CreateWorkers;
     }
 
-    public bool TryBuildNewBase()
+    public void AddWorker(Worker worker)
     {
-        if (HasFlag == false)
+        _workers.Add(worker);
+        TryEnterBuildMode();
+    }
+
+    private void OnWorkerCreated(Worker worker)
+    {
+        _workers.Add(worker);
+        TryEnterBuildMode();
+        TryAssignTask(worker);
+    }
+
+    public void RemoveWorker(Worker worker)
+    {
+        _workers.Remove(worker);
+    }
+
+    private void TryEnterBuildMode()
+    {
+        if (_flag == null)
+            return;
+
+        if (_workers.Count > 1)
+            _mode = Mode.BuildNewBase;
+    }
+
+    private void OnResourcesFound(IReadOnlyList<Resource> resources)
+    {
+        _resourceProvider.AddResources(resources);
+        TryAssignTasksToIdleWorkers();
+    }
+
+    private void OnWorkerArrived(Worker worker)
+    {
+        if (_workers.Contains(worker) == false)
+            return;
+
+        if (worker.CarriedResource != null)
+        {
+            Resource resource = worker.TakeResource();
+            ResourceCounter.Add(resource);
+            _resourceProvider.RemoveResource(resource);
+        }
+
+        TryAssignTask(worker);
+    }
+
+    private void OnBaseBuilt(Base newBase, Worker worker)
+    {
+        newBase.SetResourceProvider(_resourceProvider);
+        newBase.SetScanner(_scanner);
+        RemoveWorker(worker);
+        worker.SetHomeBase(newBase.GatheringPointWorkers);
+        newBase.AddWorker(worker);
+        worker.ReturnToBase();
+    }
+
+    private void TryAssignTasksToIdleWorkers()
+    {
+        foreach (var worker in _workers)
+        {
+            if (worker.IsBusy == false)
+                TryAssignTask(worker);
+        }
+    }
+
+    private void TryAssignTask(Worker worker)
+    {
+        if (TryAssignBuildTask(worker))
+            return;
+
+        TryCreateWorker();
+
+        if (_resourceProvider == null)
+        {
+            worker.StopMission();
+            return;
+        }
+
+        if (_resourceProvider.TryGetFreeResource(out Resource resource))
+            worker.SendToCollect(resource);
+        else
+            worker.StopMission();
+    }
+
+    private bool TryAssignBuildTask(Worker worker)
+    {
+        if (_mode != Mode.BuildNewBase)
+            return false;
+
+        if (_flag == null)
             return false;
 
         if (_workers.Count <= 1)
             return false;
 
-        var worker = GetWorker(WorkerRole.Builder);
+        if (ResourceCounter.TryCost(BuildNewBaseCost) == false)
+            return false;
 
-        if (worker != null && worker.IsBusy == false)
-        {
-            if (_constructionPresenter != null)
-            {
-                _constructionPresenter.SetWorker(worker);
-                _constructionPresenter.OnConstructionComplete -= OnBaseConstructionComplete;
-                _constructionPresenter.OnConstructionComplete += OnBaseConstructionComplete;
-            }
-
-            _commander.BuildNewBase(worker, Flag.transform.position);
-            Mode = Mode.CreateWorkers;
-            return true;
-        }
-
-        worker = _workers.FirstOrDefault();
-
-        if (worker != null)
-            worker.ReserveBuilder();
-
-        return false;
-    }
-
-    private void OnBaseConstructionComplete(Base newBase, Worker worker)
-    {
-        RemoveWorker(worker);
-        worker.SetBase(newBase.GatheringPointWorkers.position);
-        newBase.AddWorker(worker);
+        Vector3 buildPosition = _flag.transform.position;
         RemoveFlag();
 
-        var resourceCreators = FindObjectsOfType<ResourceCreator>();
-
-        if (newBase.ResourceReceiver != null)
-        {
-            foreach (var creator in resourceCreators)
-            {
-                if (creator != null)
-                    creator.RegisterReceiver(newBase.ResourceReceiver);
-            }
-        }
-
-        if (_constructionPresenter != null)
-            _constructionPresenter.OnConstructionComplete -= OnBaseConstructionComplete;
-    }
-
-    public bool TryCreateWorker()
-    {
-        _workerCreator.Create();
+        worker.BuildCompleted += OnWorkerBuildCompleted;
+        worker.SendToBuild(buildPosition);
         return true;
     }
 
-    public void AddWorker(Worker worker) =>
-        _workers.Add(worker);
-
-    public void RemoveWorker(Worker worker) =>
-        _workers.Remove(worker);
-    
-    private void ChangeModeOnBuild()
+    private void OnWorkerBuildCompleted(Worker worker, Vector3 position)
     {
-        if (_workers.Count > 1)
-        {
-            Mode = Mode.BuildNewBase;
-            _IsModeMonitoting = false;
-        }
+        worker.BuildCompleted -= OnWorkerBuildCompleted;
+        _baseBuilder.Build(worker, position);
     }
 
-    private Worker GetWorker(WorkerRole role) =>
-        _workers.FirstOrDefault(worker => role == worker.Role);
+    private void TryCreateWorker()
+    {
+        if (_mode != Mode.CreateWorkers)
+            return;
 
-    private Worker GetWorker(bool isBusy, WorkerRole role) =>
-        _workers.FirstOrDefault(worker => worker.IsBusy == isBusy && role == worker.Role);
+        if (ResourceCounter.TryCost(CreateWorkerCost) == false)
+            return;
+
+        _workerCreator.Create();
+    }
 }
 
 public enum Mode

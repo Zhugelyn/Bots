@@ -6,31 +6,29 @@ namespace Workers
     public class AnimationStateMonitor : MonoBehaviour
     {
         private const int LayerIndex = 0;
-        private const float CompletitionTime = 1f;
+        private const float CompletionTime = 1f;
 
         private Animator _animator;
-        private AnimatorStateInfo _stateInfo;
-        
-        public event Action OnPickUpFinished;
-
-        private void Update()
-        {
-            CheckFinished();
-        }
+        private Action _onPickUpFinished;
 
         public void Initialize(Animator animator, Action onPickUpFinished = null)
         {
             _animator = animator;
-            OnPickUpFinished = onPickUpFinished;
+            _onPickUpFinished = onPickUpFinished;
         }
 
-        public void CheckFinished()
+        private void Update()
         {
-            _stateInfo = _animator.GetCurrentAnimatorStateInfo(LayerIndex);
+            if (_animator == null)
+                return;
 
-            if (_stateInfo.shortNameHash == WorkerAnimatorData.Params.IsPickUp &&
-                _stateInfo.normalizedTime >= CompletitionTime)
-                OnPickUpFinished?.Invoke();
+            if (_animator.GetBool(WorkerAnimatorData.Params.IsPickUp) == false)
+                return;
+
+            AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(LayerIndex);
+
+            if (stateInfo.normalizedTime >= CompletionTime)
+                _onPickUpFinished?.Invoke();
         }
     }
 }

@@ -6,22 +6,18 @@ using UnityEngine;
 public class Scanner : MonoBehaviour
 {
     private const string ResourceLayerMask = "Resource";
-    
+    private const int BufferSize = 64;
+
     private float _radius = 150;
     private int _scanDelay = 15;
     private LayerMask _layerMask;
-    
-    public event Action<List<Vector3>> ResourcesFound;
-    
+    private Collider[] _buffer = new Collider[BufferSize];
+
+    public event Action<IReadOnlyList<Resource>> ResourcesFound;
+
     private void Awake()
     {
-        Initialize();
-    }
-    
-    public void Initialize()
-    {
         _layerMask = LayerMask.GetMask(ResourceLayerMask);
-        
         StartCoroutine(StartScan());
     }
 
@@ -31,7 +27,7 @@ public class Scanner : MonoBehaviour
 
         while (enabled)
         {
-            List<Vector3> resources = Scan();
+            List<Resource> resources = Scan();
 
             if (resources.Count > 0)
                 ResourcesFound?.Invoke(resources);
@@ -40,22 +36,22 @@ public class Scanner : MonoBehaviour
         }
     }
 
-    private  List<Vector3> Scan()
+    private List<Resource> Scan()
     {
-        List<Vector3> resourcesPosition = new List<Vector3>();
-        Collider[] colliders = Physics.OverlapSphere(transform.position, _radius, _layerMask);
+        List<Resource> found = new List<Resource>();
+        int count = Physics.OverlapSphereNonAlloc(transform.position, _radius, _buffer, _layerMask);
 
-        foreach (Collider collider in colliders)
+        for (int i = 0; i < count; i++)
         {
-            if (collider.TryGetComponent(out Resource resource) == false)
+            if (_buffer[i].TryGetComponent(out Resource resource) == false)
                 continue;
 
             if (resource.transform.parent != null)
                 continue;
-            
-            resourcesPosition.Add(collider.transform.position);
+
+            found.Add(resource);
         }
 
-        return resourcesPosition;
+        return found;
     }
 }

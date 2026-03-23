@@ -30,12 +30,8 @@ public class BaseClickView : MonoBehaviour
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             
         if (Physics.Raycast(ray, out RaycastHit hit))
-        {
             if (hit.collider.TryGetComponent(out baseComponent))
-            {
                 return true;
-            }
-        }
         
         baseComponent = null;
         return false;
